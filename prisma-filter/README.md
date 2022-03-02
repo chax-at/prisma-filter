@@ -6,7 +6,7 @@ The query parameters use the same structure as <a href="http://tabulator.info/do
 ## Usage - Frontend
 First, install all needed types by running
 ```
-npm i @chax-at/prisma-filter-common
+npm i -D @chax-at/prisma-filter-common
 ```
 
 Then, if you want to filter + paginate the result of a certain request, you can send query parameters that satisfy
