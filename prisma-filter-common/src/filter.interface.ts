@@ -11,8 +11,8 @@ export interface IPaginatedDto<T> {
 export interface IFilter<T = any> {
   filter?: Array<ISingleFilter<T>>;
   order?: Array<ISingleOrder<T>>;
-  offset: number;
-  limit: number;
+  offset?: number;
+  limit?: number;
 }
 
 export interface ISingleFilter<T = any> {
