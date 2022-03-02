@@ -177,7 +177,7 @@ export class SomeController {
 ### FilterPipe
 The `FilterPipe` works like the `DirectFilterPipe`, however the parameter is an object that can map certain
 query parameter names to different key names of the object, e.g.
-```json
+```
 {
   // the query parameter is frontendUsernameFilterName, but will filter on the name field of the object
   'frontendUsernameFilterName': 'name',
