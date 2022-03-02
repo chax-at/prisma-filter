@@ -38,7 +38,7 @@ To validate the user query input, you might have to provide your own interface i
 validation constraints. If you're using class-validator and class-transformer, this definition can look like this
 (set the constraints and default values for offset+limit to sensible values for your project):
 ```typescript
-import { FilterOperationType, FilterOrder, GeneratedFindOptions, IFilter, IGeneratedFilter, ISingleFilter, ISingleFilterOrder } from '@chax-at/prisma-filter';
+import { FilterOperationType, FilterOrder, GeneratedFindOptions, IFilter, IGeneratedFilter, ISingleFilter, ISingleOrder } from '@chax-at/prisma-filter';
 import { Type } from 'class-transformer';
 import { IsArray, IsDefined, IsEnum, IsIn, IsInt, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
 
@@ -54,7 +54,7 @@ export class SingleFilter<T> implements ISingleFilter<T> {
   value: any;
 }
 
-export class SingleFilterOrder<T> implements ISingleFilterOrder<T> {
+export class SingleFilterOrder<T> implements ISingleOrder<T> {
   @IsString()
   field!: keyof T;
 

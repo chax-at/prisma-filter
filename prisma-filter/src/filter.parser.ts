@@ -1,4 +1,4 @@
-import { FilterOperationType, FilterOrder, IFilter, ISingleFilter, ISingleFilterOrder } from '@chax-at/prisma-filter-common';
+import { FilterOperationType, FilterOrder, IFilter, ISingleFilter, ISingleOrder } from '@chax-at/prisma-filter-common';
 import { GeneratedFindOptions } from './filter.interface';
 import { IntFilter, StringFilter } from './prisma.type';
 
@@ -105,7 +105,7 @@ export class FilterParser<TDto, TWhereInput> {
     }
   }
 
-  private generateOrder(order: Array<ISingleFilterOrder<TDto>>): Array<{ [p in keyof TWhereInput]?: FilterOrder }> {
+  private generateOrder(order: Array<ISingleOrder<TDto>>): Array<{ [p in keyof TWhereInput]?: FilterOrder }> {
     const generatedOrder = [];
     for(const orderEntry of order) {
       const dbFieldName = this.mapping[orderEntry.field];
