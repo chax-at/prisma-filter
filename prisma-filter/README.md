@@ -10,7 +10,7 @@ npm i @chax-at/prisma-filter-common
 ```
 
 Then, if you want to filter + paginate the result of a certain request, you can send query parameters that satisfy
-the `IFilter` interface from the common library. 
+the `IFilter` interface from the common library.
 
 ```
 http://localhost:3000/api/admin/orders?offset=10&limit=10&filter[0][field]=id&filter[0][type]==&filter[0][value]=2&filter[1][field]=name&filter[1][type]=like&filter[1][value]=%Must%&order[0][field]=name&order[0][dir]=asc
@@ -31,6 +31,8 @@ First, install the package by running
 ```
 npm i @chax-at/prisma-filter
 ```
+
+You also need to have `@nestjs/common` installed, currently version 6-8 is supported.
 
 To validate the user query input, you might have to provide your own interface implementations with the annotated
 validation constraints. If you're using class-validator and class-transformer, this definition can look like this
@@ -105,7 +107,7 @@ import { Prisma } from '@prisma/client';
 @Controller('/some/path')
 export class SomeController {
   constructor(private readonly someService: SomeService) {}
-  
+
   @Get()
   public async getOrders(
     @Query(new DirectFilterPipe<any, Prisma.OrderWhereInput>(
@@ -145,13 +147,13 @@ export class SomeService {
 
 #### Parameters
 * `keys` is the first parameter and is a list of all keys that can be filtered directly in the OrderWhereInput,
-not including any relations. These are type checked.
+  not including any relations. These are type checked.
 * `compoundKeys` (optional) can be used to query related fields, e.g. if your `Order` model has a relation `user`, then you can filter on
-`user.email`. If the relation is 1:n or n:n like `articles` in an `Order`, then you can use the
-<a href="https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#filter-on--to-many-relations">
-corresponding prisma syntax
-</a>, e.g. `articles.some.title` to filter for orders that contain at least one article with the given title.
-These are not type checked.
+  `user.email`. If the relation is 1:n or n:n like `articles` in an `Order`, then you can use the
+  <a href="https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#filter-on--to-many-relations">
+  corresponding prisma syntax
+  </a>, e.g. `articles.some.title` to filter for orders that contain at least one article with the given title.
+  These are not type checked.
 
 #### Virtual fields
 If you prefix your compoundKey with `!`, then it will be ignored by the filter pipe. You can use this, if you

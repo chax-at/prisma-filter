@@ -32,6 +32,8 @@ First, install the package by running
 npm i @chax-at/prisma-filter
 ```
 
+You also need to have `@nestjs/common` installed, currently version 6-8 is supported.
+
 To validate the user query input, you might have to provide your own interface implementations with the annotated
 validation constraints. If you're using class-validator and class-transformer, this definition can look like this
 (set the constraints and default values for offset+limit to sensible values for your project):
