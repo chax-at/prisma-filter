@@ -1,0 +1,18 @@
+{
+  "name": "@chax-at/prisma-filter-common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run build",
+    "build": "tsc",
+    "publish": "npm publish --access public"
+  },
+  "author": "chax.at - Challenge Accepted",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
+}

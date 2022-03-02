@@ -1,0 +1,24 @@
+{
+  "name": "@chax-at/prisma-filter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "tsc",
+    "publish": "npm publish --access public"
+  },
+  "author": "chax.at - Challenge Accepted",
+  "license": "ISC",
+  "dependencies": {
+    "@chax-at/prisma-filter-common": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.26",
+    "typescript": "^4.6.2"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "6 - 8"
+  }
+}
