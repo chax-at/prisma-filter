@@ -5,7 +5,9 @@ export enum FilterOperationType {
   Gt = '>',
   Gte = '>=',
   Ne = '!=',
-  // Like is always treated as case-insensitive
+  /**
+   * Like is always treated as case-insensitive
+   */
   Like = 'like',
   In = 'in',
   EqNull = 'eqnull',
