@@ -5,6 +5,7 @@ import { IntFilter, StringFilter } from './prisma.type';
 export class FilterParser<TDto, TWhereInput> {
   constructor(
     private readonly mapping: { [p in keyof TDto]?: keyof TWhereInput & string },
+    private readonly allowAllFields = false,
   ) { }
 
   public generateQueryFindOptions(filterDto: IFilter<TDto>): GeneratedFindOptions<TWhereInput> {
@@ -29,10 +30,14 @@ export class FilterParser<TDto, TWhereInput> {
     const where: { [p in keyof TWhereInput]?: any } = {};
     for(const filterEntry of filter) {
       const fieldName = filterEntry.field;
-      const dbFieldName = this.mapping[filterEntry.field];
+      let dbFieldName = this.mapping[filterEntry.field];
 
       if(dbFieldName == null) {
-        throw new Error(`${fieldName} is not filterable`);
+        if(this.allowAllFields && !fieldName.includes('.')) {
+          dbFieldName = fieldName as unknown as (keyof TWhereInput & string);
+        } else {
+          throw new Error(`${fieldName} is not filterable`);
+        }
       }
       if(dbFieldName.length > 0 && dbFieldName[0] === '!') {
         continue;
@@ -108,10 +113,15 @@ export class FilterParser<TDto, TWhereInput> {
   private generateOrder(order: Array<ISingleOrder<TDto>>): Array<{ [p in keyof TWhereInput]?: FilterOrder }> {
     const generatedOrder = [];
     for(const orderEntry of order) {
-      const dbFieldName = this.mapping[orderEntry.field];
+      const fieldName = orderEntry.field as (keyof TDto & string);
+      let dbFieldName = this.mapping[fieldName];
 
       if(dbFieldName == null) {
-        throw new Error(`${orderEntry.field} is not sortable`);
+        if(this.allowAllFields && !fieldName.includes('.')) {
+          dbFieldName = fieldName as unknown as (keyof TWhereInput & string);
+        } else {
+          throw new Error(`${fieldName} is not sortable`);
+        }
       }
 
       if(dbFieldName.length > 0 && dbFieldName[0] === '!') {

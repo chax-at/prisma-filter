@@ -174,6 +174,30 @@ export class SomeController {
 }
 ```
 
+### AllFilterPipe
+The `AllFilterPipe` is a pipe that can be used more conveniently if you want to allow filtering on all fields of the model.
+Compound keys still have to be specified as described above.
+> :warning: This allows users to read ALL keys of the model, even if you don't return the data
+> (e.g. by sending multiple like filters until the user knows the full value).
+> 
+> Make sure that your model does not contain any sensitive data in fields (e.g. don't use this pipe on a `users` table with
+> a `password` field).
+
+```typescript
+export class SomeController {
+  @Get()
+  public async getOrders(
+    @Query(new AllFilterPipe<any, Prisma.OrderWhereInput>(
+      ['event.title', 'user.email'],
+    )) filterDto: FilterDto<Prisma.OrderWhereInput>,
+  ) {
+    if(filterDto.filter?.some(f => f.field === '!paymentInAdvance')) {
+      console.log('The paymentInAdvance filter is set, now I can do whatever I want!');
+    }
+  }
+}
+```
+
 ### FilterPipe
 The `FilterPipe` works like the `DirectFilterPipe`, however the parameter is an object that can map certain
 query parameter names to different key names of the object, e.g.

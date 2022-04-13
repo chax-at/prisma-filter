@@ -22,6 +22,7 @@ export interface ISingleFilter<T = any> {
 }
 
 export interface ISingleOrder<T = any> {
+  // TODO: In the next major version, this should be keyof T & string
   field: keyof T;
   dir: FilterOrder;
 }

@@ -7,35 +7,34 @@ import { FilterParser } from './filter.parser';
  * This pipe transforms Tabulator-like filters (usually in query parameters) to a generated filter with prisma WhereInput for a specified model assuming you
  * have a direct 1:1 mapping (i.e. the filter field names are the same as the database field names).
  *
- * This pipe is easier to use than FilterPipe, but cannot contain custom mappings.
+ * This pipe allows to filter for ALL available fields on the target model. If you want to use compound keys (e.g. 'user.email'), then you still have to specify
+ * them.
+ * WARNING - make sure your model does not contain sensitive data because it's possible to read ALL fields by using like filters.
  *
- * In most cases, this pipe can be used by using new DirectFilterPipe<any, Prisma.MyWhereInput>(['field1', 'field2'])
- **
  * See comment in filter.pipe.ts for further explanation how this pipe works (except that the constructor takes an array of strings instead of a mapping)
  * See filter.parser.ts for FilterParser implementation details.
  */
 @Injectable()
-export class DirectFilterPipe<TDto, TWhereInput> implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>> {
+export class AllFilterPipe<TDto, TWhereInput> implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>> {
   private readonly filterParser: FilterParser<TDto, TWhereInput>;
 
   /**
    * Create a new filter pipe that transforms Tabulator-like filters (usually in query parameters) to a generated filter with prisma WhereInput for a specified
    * model assuming you have a direct 1:1 mapping (i.e. the filter field names are the same as the database field names).
    *
-   * @example new DirectFilterPipe<any, Prisma.OrderInput>(['id', 'createdAt'], ['user.name', 'articles.some.name'])
+   * WARNING - make sure your model does not contain sensitive data because it's possible to read ALL fields by using like filters.
    *
-   * @param keys - Keys that are mapped 1:1
+   * @example new DirectFilterPipe<any, Prisma.OrderInput>(['user.name', 'articles.some.name'])
+   *
    * @param compoundKeys - Keys in the form of 'user.firstname' (-to-one relation) or 'articles.some.name' (-to-many relation) which will be mapped to relations. Keys starting with ! are ignored.
    */
-  constructor(keys: Array<keyof TDto & keyof TWhereInput & string>, compoundKeys: string[] = []) {
+
+  constructor(compoundKeys: string[] = []) {
     const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = {};
-    for(const key of keys) {
-      mapping[key] = key;
-    }
     for(const untypedKey of compoundKeys) {
       (mapping as any)[untypedKey] = untypedKey;
     }
-    this.filterParser = new FilterParser<TDto, TWhereInput>(mapping);
+    this.filterParser = new FilterParser<TDto, TWhereInput>(mapping, true);
   }
 
   public transform(value: IFilter<TDto>): IGeneratedFilter<TWhereInput> {
