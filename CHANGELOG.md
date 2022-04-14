@@ -24,10 +24,10 @@ export class SingleFilterOrder<T> implements ISingleOrder<T> {
 ### Added
 - New `AllFilterPipe` that allows filtering all model keys without specifying them.
 - Support for booleans in `Eq`, `Neq` filters.
-- Add `InStrings`, `EqString`, `NeqString` filters to explicitly filter by string instead of using auto conversion.
+- `InStrings`, `EqString`, `NeqString` filters to explicitly filter by string instead of using auto conversion.
 
 ### Changed
 - Split up `Like`, `Ilike` filters.
 
 ### Removed
-- Removed deprecated `IPaginatedDto` interface.
+- `IPaginatedDto` interface.
