@@ -207,15 +207,15 @@ Compound keys still have to be specified as described above.
 
 ```typescript
 export class SomeController {
+  constructor(private readonly someService: SomeService) {}
+
   @Get()
   public async getOrders(
     @Query(new AllFilterPipe<any, Prisma.OrderWhereInput>(
-      ['event.title', 'user.email'],
-    )) filterDto: FilterDto<Prisma.OrderWhereInput>,
+      ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
+    )) filterDto: FilterDto<Prisma.OrderWhereInput>
   ) {
-    if(filterDto.filter?.some(f => f.field === '!paymentInAdvance')) {
-      console.log('The paymentInAdvance filter is set, now I can do whatever I want!');
-    }
+    return this.someService.getOrders(filterDto.findOptions);
   }
 }
 ```
