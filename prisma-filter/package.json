@@ -1,6 +1,6 @@
 {
   "name": "@chax-at/prisma-filter",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "The PrismaFilter package allows the frontend to request filtered, sorted, and paginated data via query parameters. The package automatically generates Prisma findOptions from these query parameters, which can then be directly used in the backend.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
