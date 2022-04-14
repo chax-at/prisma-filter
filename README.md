@@ -34,7 +34,7 @@ of `'null'`, then use the `EqNull`/`NeqNull` filter types (the given value is ig
 Since the filter is transferred via query parameters, everything will be converted into a string. This library will
 automatically convert the filter value following these rules:
 * If the filter type is `Eq`, `Neq` and the value is 'true' or 'false', then it's converted into a boolean
-    * Use `EqString`, `NeqString` if you want to filter strings and don't convert it
+  * Use `EqString`, `NeqString` if you want to filter strings and don't convert it
 * If the filter type is not `Like` or `...String` and the value is a number (or a number array for `In`), then it's converted into a number (or a number array)
 * Otherwise, the value is treated as a string
 
@@ -135,7 +135,7 @@ export class SomeController {
     @Query(new DirectFilterPipe<any, Prisma.OrderWhereInput>(
       ['id', 'status', 'createdAt', 'refundStatus', 'refundedPrice', 'paymentDate', 'totalPrice', 'paymentMethod'],
       ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
-    )) filterDto: FilterDto<Prisma.OrderWhereInput>
+    )) filterDto: FilterDto<Prisma.OrderWhereInput>,
   ) {
     return this.someService.getOrders(filterDto.findOptions);
   }
@@ -207,15 +207,15 @@ Compound keys still have to be specified as described above.
 
 ```typescript
 export class SomeController {
+  constructor(private readonly someService: SomeService) {}
+
   @Get()
   public async getOrders(
     @Query(new AllFilterPipe<any, Prisma.OrderWhereInput>(
-      ['event.title', 'user.email'],
+      ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
     )) filterDto: FilterDto<Prisma.OrderWhereInput>,
   ) {
-    if(filterDto.filter?.some(f => f.field === '!paymentInAdvance')) {
-      console.log('The paymentInAdvance filter is set, now I can do whatever I want!');
-    }
+    return this.someService.getOrders(filterDto.findOptions);
   }
 }
 ```

@@ -135,7 +135,7 @@ export class SomeController {
     @Query(new DirectFilterPipe<any, Prisma.OrderWhereInput>(
       ['id', 'status', 'createdAt', 'refundStatus', 'refundedPrice', 'paymentDate', 'totalPrice', 'paymentMethod'],
       ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
-    )) filterDto: FilterDto<Prisma.OrderWhereInput>
+    )) filterDto: FilterDto<Prisma.OrderWhereInput>,
   ) {
     return this.someService.getOrders(filterDto.findOptions);
   }
@@ -213,7 +213,7 @@ export class SomeController {
   public async getOrders(
     @Query(new AllFilterPipe<any, Prisma.OrderWhereInput>(
       ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
-    )) filterDto: FilterDto<Prisma.OrderWhereInput>
+    )) filterDto: FilterDto<Prisma.OrderWhereInput>,
   ) {
     return this.someService.getOrders(filterDto.findOptions);
   }
