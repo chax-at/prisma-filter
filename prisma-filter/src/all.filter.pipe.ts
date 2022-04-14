@@ -7,7 +7,7 @@ import { FilterParser } from './filter.parser';
  * This pipe transforms Tabulator-like filters (usually in query parameters) to a generated filter with prisma WhereInput for a specified model assuming you
  * have a direct 1:1 mapping (i.e. the filter field names are the same as the database field names).
  *
- * This pipe allows to filter for ALL available fields on the target model. If you want to use compound keys (e.g. 'user.email'), then you still have to specify
+ * This pipe allows filtering for ALL available fields on the target model. If you want to use compound keys (e.g. 'user.email'), then you still have to specify
  * them.
  * WARNING - make sure your model does not contain sensitive data because it's possible to read ALL fields by using like filters.
  *
