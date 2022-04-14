@@ -1,9 +1,10 @@
 {
   "name": "@chax-at/prisma-filter",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "repository": "github:chax-at/prisma-filter",
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc",
@@ -12,7 +13,7 @@
   "author": "chax.at - Challenge Accepted",
   "license": "ISC",
   "dependencies": {
-    "@chax-at/prisma-filter-common": "^1.0.0"
+    "@chax-at/prisma-filter-common": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.26",

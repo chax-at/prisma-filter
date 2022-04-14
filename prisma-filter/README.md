@@ -20,6 +20,28 @@ Check the `FilterOperationType` enum to see all possible filter types. Note that
 treated as a `string`, `number` (or `string[]`/`number[]` for `in`-filters). If you want to filter by `null` instead
 of `'null'`, then use the `EqNull`/`NeqNull` filter types (the given value is ignored in this case).
 
+### Filter types
+* `Eq`, `Neq` checks for strict (in)equality. Used for numbers and booleans.
+* `EqString`, `NeqString` string (in)equality check for strings. Does not convert numbers or booleans unlike `Eq` and `Neq`.
+* `Lt`, `Lte`, `Gt`, `Gte` is used to filter numbers by checking whether they are greater/less than (or equal to) the value
+* `Like` is transformed into a postgres `like`, used to filter for strings. Use `%` as a wildcard, e.g. `%Max%` to find partial matches.
+* `Ilike` is like `Like` but case-insensitive
+* `In` checks whether the value is in the given numbers array. Use `InStrings` for string arrays.
+* `InStrings` checks whether value is in the given string array.
+* `EqNull`, `NeqNull` checks whether the value is null or not null. Must be used instead of `Eq`, `Neq` because otherwise `null` would be treated as string
+
+### Filter value types
+Since the filter is transferred via query parameters, everything will be converted into a string. This library will
+automatically convert the filter value following these rules:
+* If the filter type is `Eq`, `Neq` and the value is 'true' or 'false', then it's converted into a boolean
+  * Use `EqString`, `NeqString` if you want to filter strings and don't convert it
+* If the filter type is not `Like` or `...String` and the value is a number (or a number array for `In`), then it's converted into a number (or a number array)
+* Otherwise, the value is treated as a string
+
+For string filters, the `Like` or `Ilike` filter types are recommended since usually a partial search is required.
+But if you want to use a different filter for strings, make sure to use the `...String` variant of it, otherwise
+<a href="https://twitter.com/racheltrue/status/1365461618977476610">Rachel True</a> can't filter by her name.
+
 ## Usage - Backend
 
 This package exports two <a href="https://docs.nestjs.com/pipes">Pipes</a>, the `DirectFilterPipe` (which is used in most cases)
@@ -56,7 +78,7 @@ export class SingleFilter<T> implements ISingleFilter<T> {
 
 export class SingleFilterOrder<T> implements ISingleOrder<T> {
   @IsString()
-  field!: keyof T;
+  field!: keyof T & string;
 
   @IsIn(['asc', 'desc'])
   dir!: FilterOrder;

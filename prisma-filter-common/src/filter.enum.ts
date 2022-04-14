@@ -5,13 +5,14 @@ export enum FilterOperationType {
   Gt = '>',
   Gte = '>=',
   Ne = '!=',
-  /**
-   * Like is always treated as case-insensitive
-   */
   Like = 'like',
+  Ilike = 'ilike',
   In = 'in',
+  InStrings = 'instrings',
   EqNull = 'eqnull',
   NeqNull = 'neqnull',
+  EqString = 'eqstring',
+  NeqString = 'neqstring',
 }
 
 export type FilterOrder = 'asc' | 'desc';

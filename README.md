@@ -10,7 +10,7 @@ npm i -D @chax-at/prisma-filter-common
 ```
 
 Then, if you want to filter + paginate the result of a certain request, you can send query parameters that satisfy
-the `IFilter` interface from the common library. 
+the `IFilter` interface from the common library.
 
 ```
 http://localhost:3000/api/admin/orders?offset=10&limit=10&filter[0][field]=id&filter[0][type]==&filter[0][value]=2&filter[1][field]=name&filter[1][type]=like&filter[1][value]=%Must%&order[0][field]=name&order[0][dir]=asc
@@ -19,6 +19,28 @@ http://localhost:3000/api/admin/orders?offset=10&limit=10&filter[0][field]=id&fi
 Check the `FilterOperationType` enum to see all possible filter types. Note that by default, all filter values are
 treated as a `string`, `number` (or `string[]`/`number[]` for `in`-filters). If you want to filter by `null` instead
 of `'null'`, then use the `EqNull`/`NeqNull` filter types (the given value is ignored in this case).
+
+### Filter types
+* `Eq`, `Neq` checks for strict (in)equality. Used for numbers and booleans.
+* `EqString`, `NeqString` string (in)equality check for strings. Does not convert numbers or booleans unlike `Eq` and `Neq`.
+* `Lt`, `Lte`, `Gt`, `Gte` is used to filter numbers by checking whether they are greater/less than (or equal to) the value
+* `Like` is transformed into a postgres `like`, used to filter for strings. Use `%` as a wildcard, e.g. `%Max%` to find partial matches.
+* `Ilike` is like `Like` but case-insensitive
+* `In` checks whether the value is in the given numbers array. Use `InStrings` for string arrays.
+* `InStrings` checks whether value is in the given string array.
+* `EqNull`, `NeqNull` checks whether the value is null or not null. Must be used instead of `Eq`, `Neq` because otherwise `null` would be treated as string
+
+### Filter value types
+Since the filter is transferred via query parameters, everything will be converted into a string. This library will
+automatically convert the filter value following these rules:
+* If the filter type is `Eq`, `Neq` and the value is 'true' or 'false', then it's converted into a boolean
+    * Use `EqString`, `NeqString` if you want to filter strings and don't convert it
+* If the filter type is not `Like` or `...String` and the value is a number (or a number array for `In`), then it's converted into a number (or a number array)
+* Otherwise, the value is treated as a string
+
+For string filters, the `Like` or `Ilike` filter types are recommended since usually a partial search is required.
+But if you want to use a different filter for strings, make sure to use the `...String` variant of it, otherwise
+<a href="https://twitter.com/racheltrue/status/1365461618977476610">Rachel True</a> can't filter by her name.
 
 ## Usage - Backend
 
@@ -56,7 +78,7 @@ export class SingleFilter<T> implements ISingleFilter<T> {
 
 export class SingleFilterOrder<T> implements ISingleOrder<T> {
   @IsString()
-  field!: keyof T;
+  field!: keyof T & string;
 
   @IsIn(['asc', 'desc'])
   dir!: FilterOrder;
@@ -107,7 +129,7 @@ import { Prisma } from '@prisma/client';
 @Controller('/some/path')
 export class SomeController {
   constructor(private readonly someService: SomeService) {}
-  
+
   @Get()
   public async getOrders(
     @Query(new DirectFilterPipe<any, Prisma.OrderWhereInput>(
@@ -147,13 +169,13 @@ export class SomeService {
 
 #### Parameters
 * `keys` is the first parameter and is a list of all keys that can be filtered directly in the OrderWhereInput,
-not including any relations. These are type checked.
+  not including any relations. These are type checked.
 * `compoundKeys` (optional) can be used to query related fields, e.g. if your `Order` model has a relation `user`, then you can filter on
-`user.email`. If the relation is 1:n or n:n like `articles` in an `Order`, then you can use the
-<a href="https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#filter-on--to-many-relations">
-corresponding prisma syntax
-</a>, e.g. `articles.some.title` to filter for orders that contain at least one article with the given title.
-These are not type checked.
+  `user.email`. If the relation is 1:n or n:n like `articles` in an `Order`, then you can use the
+  <a href="https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#filter-on--to-many-relations">
+  corresponding prisma syntax
+  </a>, e.g. `articles.some.title` to filter for orders that contain at least one article with the given title.
+  These are not type checked.
 
 #### Virtual fields
 If you prefix your compoundKey with `!`, then it will be ignored by the filter pipe. You can use this, if you
@@ -165,6 +187,30 @@ export class SomeController {
     @Query(new DirectFilterPipe<any, Prisma.OrderWhereInput>(
       [],
       ['!paymentInAdvance'],
+    )) filterDto: FilterDto<Prisma.OrderWhereInput>,
+  ) {
+    if(filterDto.filter?.some(f => f.field === '!paymentInAdvance')) {
+      console.log('The paymentInAdvance filter is set, now I can do whatever I want!');
+    }
+  }
+}
+```
+
+### AllFilterPipe
+The `AllFilterPipe` is a pipe that can be used more conveniently if you want to allow filtering on all fields of the model.
+Compound keys still have to be specified as described above.
+> :warning: This allows users to read ALL keys of the model, even if you don't return the data
+> (e.g. by sending multiple like filters until the user knows the full value).
+>
+> Make sure that your model does not contain any sensitive data in fields (e.g. don't use this pipe on a `users` table with
+> a `password` field).
+
+```typescript
+export class SomeController {
+  @Get()
+  public async getOrders(
+    @Query(new AllFilterPipe<any, Prisma.OrderWhereInput>(
+      ['event.title', 'user.email'],
     )) filterDto: FilterDto<Prisma.OrderWhereInput>,
   ) {
     if(filterDto.filter?.some(f => f.field === '!paymentInAdvance')) {

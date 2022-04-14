@@ -58,7 +58,7 @@ export class FilterParser<TDto, TWhereInput> {
 
   private generateWhereValue(type: FilterOperationType, value: any): { [p in keyof IntFilter | keyof StringFilter]?: any } {
     const queryValue = this.getFormattedQueryValueForType(value, type);
-    if(type === FilterOperationType.Like) {
+    if(type === FilterOperationType.Ilike) {
       return {
         [this.getOpByType(type)]: queryValue,
         mode: 'insensitive',
@@ -69,8 +69,9 @@ export class FilterParser<TDto, TWhereInput> {
     };
   }
 
-  private getFormattedQueryValueForType(rawValue: any, type: FilterOperationType): string | number | string[] | number[] | null {
+  private getFormattedQueryValueForType(rawValue: any, type: FilterOperationType): string | number | string[] | number[] | boolean | null {
     if(Array.isArray(rawValue)) {
+      if(type === FilterOperationType.InStrings) return rawValue;
       if(type !== FilterOperationType.In) {
         throw new Error(`Filter type ${type} does not support array values`);
       }
@@ -82,6 +83,17 @@ export class FilterParser<TDto, TWhereInput> {
       return null;
     }
 
+    if(type === FilterOperationType.Eq || type === FilterOperationType.Ne) {
+      // If we filter for equality and the value looks like a boolean, then cast it into a boolean
+      if(rawValue === 'true') return true;
+      else if (rawValue === 'false') return false;
+    }
+
+    if(type === FilterOperationType.Like || type === FilterOperationType.EqString || type === FilterOperationType.NeqString) {
+      // Never cast this value for a like filter because this only applies to strings
+      return rawValue;
+    }
+
     return !isNaN(+rawValue) ? +rawValue : rawValue;
   }
 
@@ -89,6 +101,7 @@ export class FilterParser<TDto, TWhereInput> {
     switch(type) {
       case FilterOperationType.Eq:
       case FilterOperationType.EqNull:
+      case FilterOperationType.EqString:
         return 'equals';
       case FilterOperationType.Lt:
         return 'lt';
@@ -100,10 +113,13 @@ export class FilterParser<TDto, TWhereInput> {
         return 'gte';
       case FilterOperationType.Ne:
       case FilterOperationType.NeqNull:
+      case FilterOperationType.NeqString:
         return 'not';
       case FilterOperationType.Like:
+      case FilterOperationType.Ilike:
         return 'contains';
       case FilterOperationType.In:
+      case FilterOperationType.InStrings:
         return 'in';
       default:
         throw new Error(`${type} is not a valid filter type`);
@@ -113,7 +129,7 @@ export class FilterParser<TDto, TWhereInput> {
   private generateOrder(order: Array<ISingleOrder<TDto>>): Array<{ [p in keyof TWhereInput]?: FilterOrder }> {
     const generatedOrder = [];
     for(const orderEntry of order) {
-      const fieldName = orderEntry.field as (keyof TDto & string);
+      const fieldName = orderEntry.field;
       let dbFieldName = this.mapping[fieldName];
 
       if(dbFieldName == null) {

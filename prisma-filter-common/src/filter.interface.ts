@@ -1,13 +1,5 @@
 import { FilterOperationType, FilterOrder } from './filter.enum';
 
-/**
- * @deprecated This will be removed in the future, define this typing in your own project instead if you need it
- */
-export interface IPaginatedDto<T> {
-  rows: Array<T>;
-  count: number;
-}
-
 export interface IFilter<T = any> {
   filter?: Array<ISingleFilter<T>>;
   order?: Array<ISingleOrder<T>>;
@@ -22,7 +14,6 @@ export interface ISingleFilter<T = any> {
 }
 
 export interface ISingleOrder<T = any> {
-  // TODO: In the next major version, this should be keyof T & string
-  field: keyof T;
+  field: keyof T & string;
   dir: FilterOrder;
 }
