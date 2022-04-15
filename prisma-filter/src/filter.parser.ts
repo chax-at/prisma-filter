@@ -78,7 +78,7 @@ export class FilterParser<TDto, TWhereInput> {
       return rawValue.map(v => !isNaN(+v) ? +v : v);
     }
 
-    if(type === FilterOperationType.EqNull || type === FilterOperationType.NeqNull) {
+    if(type === FilterOperationType.EqNull || type === FilterOperationType.NeNull) {
       // When the operator is of type equal/not equal null: ignore the filter value and set it to null. Otherwise, the value will be taken as a string ('null')
       return null;
     }
@@ -89,7 +89,7 @@ export class FilterParser<TDto, TWhereInput> {
       else if (rawValue === 'false') return false;
     }
 
-    if(type === FilterOperationType.Like || type === FilterOperationType.EqString || type === FilterOperationType.NeqString) {
+    if(type === FilterOperationType.Like || type === FilterOperationType.EqString || type === FilterOperationType.NeString) {
       // Never cast this value for a like filter because this only applies to strings
       return rawValue;
     }
@@ -112,8 +112,8 @@ export class FilterParser<TDto, TWhereInput> {
       case FilterOperationType.Gte:
         return 'gte';
       case FilterOperationType.Ne:
-      case FilterOperationType.NeqNull:
-      case FilterOperationType.NeqString:
+      case FilterOperationType.NeNull:
+      case FilterOperationType.NeString:
         return 'not';
       case FilterOperationType.Like:
       case FilterOperationType.Ilike:

@@ -19,15 +19,17 @@ export class SingleFilterOrder<T> implements ISingleOrder<T> {
 }
 ```
 - The `Like` filter is now case-sensitive, use the new `Ilike` filter instead to keep the old behaviour.
+- The `NeqNull` filter has been renamed to `NeNull`.
 - The deprecated `IPaginatedDto` interface has been removed.
 
 ### Added
 - New `AllFilterPipe` that allows filtering all model keys without specifying them.
-- Support for booleans in `Eq`, `Neq` filters.
-- `InStrings`, `EqString`, `NeqString` filters to explicitly filter by string instead of using auto conversion.
+- Support for booleans in `Eq`, `Ne` filters.
+- `InStrings`, `EqString`, `NeString` filters to explicitly filter by string instead of using auto conversion.
 
 ### Changed
 - Split up `Like`, `Ilike` filters.
+- Renamed `NeqNull` to `NeNull` to be more consistent.
 
 ### Removed
 - `IPaginatedDto` interface.

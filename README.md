@@ -18,23 +18,23 @@ http://localhost:3000/api/admin/orders?offset=10&limit=10&filter[0][field]=id&fi
 
 Check the `FilterOperationType` enum to see all possible filter types. Note that by default, all filter values are
 treated as a `string`, `number` (or `string[]`/`number[]` for `in`-filters). If you want to filter by `null` instead
-of `'null'`, then use the `EqNull`/`NeqNull` filter types (the given value is ignored in this case).
+of `'null'`, then use the `EqNull`/`NeNull` filter types (the given value is ignored in this case).
 
 ### Filter types
-* `Eq`, `Neq` checks for strict (in)equality. Used for numbers and booleans.
-* `EqString`, `NeqString` string (in)equality check for strings. Does not convert numbers or booleans unlike `Eq` and `Neq`.
+* `Eq`, `Ne` checks for strict (in)equality. Used for numbers and booleans.
+* `EqString`, `NeString` string (in)equality check for strings. Does not convert numbers or booleans unlike `Eq` and `Ne`.
 * `Lt`, `Lte`, `Gt`, `Gte` is used to filter numbers by checking whether they are greater/less than (or equal to) the value
 * `Like` is transformed into a postgres `like`, used to filter for strings. Use `%` as a wildcard, e.g. `%Max%` to find partial matches.
 * `Ilike` is like `Like` but case-insensitive
 * `In` checks whether the value is in the given numbers array. Use `InStrings` for string arrays.
 * `InStrings` checks whether value is in the given string array.
-* `EqNull`, `NeqNull` checks whether the value is null or not null. Must be used instead of `Eq`, `Neq` because otherwise `null` would be treated as string
+* `EqNull`, `NeNull` checks whether the value is null or not null. Must be used instead of `Eq`, `Ne` because otherwise `null` would be treated as string
 
 ### Filter value types
 Since the filter is transferred via query parameters, everything will be converted into a string. This library will
 automatically convert the filter value following these rules:
-* If the filter type is `Eq`, `Neq` and the value is 'true' or 'false', then it's converted into a boolean
-  * Use `EqString`, `NeqString` if you want to filter strings and don't convert it
+* If the filter type is `Eq`, `Ne` and the value is 'true' or 'false', then it's converted into a boolean
+  * Use `EqString`, `NeString` if you want to filter strings and don't convert it
 * If the filter type is not `Like` or `...String` and the value is a number (or a number array for `In`), then it's converted into a number (or a number array)
 * Otherwise, the value is treated as a string
 

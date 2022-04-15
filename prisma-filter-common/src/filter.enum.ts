@@ -10,9 +10,9 @@ export enum FilterOperationType {
   In = 'in',
   InStrings = 'instrings',
   EqNull = 'eqnull',
-  NeqNull = 'neqnull',
+  NeNull = 'nenull',
   EqString = 'eqstring',
-  NeqString = 'neqstring',
+  NeString = 'nestring',
 }
 
 export type FilterOrder = 'asc' | 'desc';
