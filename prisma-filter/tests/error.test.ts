@@ -19,3 +19,15 @@ test('Eq array', () => {
     filter: [{ field: 'test', type: FilterOperationType.Eq, value: ['13.5', '12'] }],
   })).toThrow(`Filter type = does not support array values`);
 });
+
+test('Should not allow an object as filter', () => {
+  expect(() => filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.Eq, value: { injections: { are: 'bad' } } }],
+  })).toThrow();
+});
+
+test('Should not allow an object array as filter', () => {
+  expect(() => filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.InStrings, value: [{ injections: { are: 'bad' } }] }],
+  })).toThrow();
+});

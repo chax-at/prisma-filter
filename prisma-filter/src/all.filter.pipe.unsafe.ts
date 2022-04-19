@@ -15,7 +15,7 @@ import { FilterParser } from './filter.parser';
  * See filter.parser.ts for FilterParser implementation details.
  */
 @Injectable()
-export class AllFilterPipe<TDto, TWhereInput> implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>> {
+export class AllFilterPipeUnsafe<TDto, TWhereInput> implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>> {
   private readonly filterParser: FilterParser<TDto, TWhereInput>;
 
   /**
@@ -24,11 +24,10 @@ export class AllFilterPipe<TDto, TWhereInput> implements PipeTransform<IFilter<T
    *
    * WARNING - make sure your model does not contain sensitive data because it's possible to read ALL fields by using like filters.
    *
-   * @example new DirectFilterPipe<any, Prisma.OrderInput>(['user.name', 'articles.some.name'])
+   * @example new AllFilterPipeUnsafe<any, Prisma.OrderInput>(['user.name', 'articles.some.name'])
    *
    * @param compoundKeys - Keys in the form of 'user.firstname' (-to-one relation) or 'articles.some.name' (-to-many relation) which will be mapped to relations. Keys starting with ! are ignored.
    */
-
   constructor(compoundKeys: string[] = []) {
     const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = {};
     for(const untypedKey of compoundKeys) {

@@ -196,8 +196,8 @@ export class SomeController {
 }
 ```
 
-### AllFilterPipe
-The `AllFilterPipe` is a pipe that can be used more conveniently if you want to allow filtering on all fields of the model.
+### AllFilterPipeUnsafe
+The `AllFilterPipeUnsafe` is a pipe that can be used more conveniently if you want to allow filtering on all fields of the model.
 Compound keys still have to be specified as described above.
 > :warning: This allows users to read ALL keys of the model, even if you don't return the data
 > (e.g. by sending multiple like filters until the user knows the full value).
@@ -211,7 +211,7 @@ export class SomeController {
 
   @Get()
   public async getOrders(
-    @Query(new AllFilterPipe<any, Prisma.OrderWhereInput>(
+    @Query(new AllFilterPipeUnsafe<any, Prisma.OrderWhereInput>(
       ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
     )) filterDto: FilterDto<Prisma.OrderWhereInput>,
   ) {

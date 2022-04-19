@@ -3,6 +3,11 @@ import { GeneratedFindOptions } from './filter.interface';
 import { IntFilter, StringFilter } from './prisma.type';
 
 export class FilterParser<TDto, TWhereInput> {
+  /**
+   *
+   * @param mapping - An object mapping from Dto key to database key
+   * @param allowAllFields - Allow filtering on *all* top-level keys. Warning! Only use this if the user should have access to ALL data of the column
+   */
   constructor(
     private readonly mapping: { [p in keyof TDto]?: keyof TWhereInput & string },
     private readonly allowAllFields = false,
@@ -71,11 +76,18 @@ export class FilterParser<TDto, TWhereInput> {
 
   private getFormattedQueryValueForType(rawValue: any, type: FilterOperationType): string | number | string[] | number[] | boolean | null {
     if(Array.isArray(rawValue)) {
+      if(rawValue.some(value => typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean')) {
+        throw new Error(`Array filter value must be an Array<string|number|boolean>`);
+      }
       if(type === FilterOperationType.InStrings) return rawValue;
       if(type !== FilterOperationType.In) {
         throw new Error(`Filter type ${type} does not support array values`);
       }
       return rawValue.map(v => !isNaN(+v) ? +v : v);
+    }
+
+    if(typeof rawValue !== 'string' && typeof rawValue !== 'number' && typeof rawValue !== 'boolean') {
+      throw new Error(`Filter value must be a string, a number or a boolean`);
     }
 
     if(type === FilterOperationType.EqNull || type === FilterOperationType.NeNull) {

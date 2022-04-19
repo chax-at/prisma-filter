@@ -23,7 +23,7 @@ export class SingleFilterOrder<T> implements ISingleOrder<T> {
 - The deprecated `IPaginatedDto` interface has been removed.
 
 ### Added
-- New `AllFilterPipe` that allows filtering all model keys without specifying them.
+- New `AllFilterPipeUnsafe` that allows filtering all model keys without specifying them.
 - Support for booleans in `Eq`, `Ne` filters.
 - `InStrings`, `EqString`, `NeString` filters to explicitly filter by string instead of using auto conversion.
 
