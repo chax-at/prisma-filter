@@ -38,5 +38,5 @@ export class SingleFilterOrder<T> implements ISingleOrder<T> {
 ### Removed
 - `IPaginatedDto` interface.
 
-[2.1.0]: https://github.com/chax-at/transactional-prisma-testing/compare/2.0.0...2.1.0
+[2.1.0]: https://github.com/chax-at/prisma-filter/compare/2.0.0...2.1.0
 [2.0.0]: https://github.com/chax-at/prisma-filter/releases/tag/2.0.0
