@@ -1,6 +1,6 @@
 {
   "name": "@chax-at/prisma-filter",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "The PrismaFilter package allows the frontend to request filtered, sorted, and paginated data via query parameters. The package automatically generates Prisma findOptions from these query parameters, which can then be directly used in the backend.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -12,9 +12,9 @@
     "test": "jest --maxWorkers=50%"
   },
   "author": "chax.at - Challenge Accepted",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "@chax-at/prisma-filter-common": "^2.0.0"
+    "@chax-at/prisma-filter-common": "^2.2.0"
   },
   "devDependencies": {
     "@swc/core": "^1.2.165",
@@ -22,7 +22,7 @@
     "@types/jest": "^27.4.1",
     "@types/node": "^16.11.26",
     "jest": "^27.5.1",
-    "typescript": "^4.6.2"
+    "typescript": "^4.8.2"
   },
   "peerDependencies": {
     "@nestjs/common": "6 - 9"

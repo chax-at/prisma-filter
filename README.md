@@ -6,7 +6,7 @@ The query parameters use the same structure as <a href="http://tabulator.info/do
 ## Usage - Frontend
 First, install all needed types by running
 ```
-npm i -D @chax-at/prisma-filter-common
+npm i @chax-at/prisma-filter-common
 ```
 
 Then, if you want to filter + paginate the result of a certain request, you can send query parameters that satisfy
@@ -20,7 +20,30 @@ Check the `FilterOperationType` enum to see all possible filter types. Note that
 treated as a `string`, `number` (or `string[]`/`number[]` for `in`-filters). If you want to filter by `null` instead
 of `'null'`, then use the `EqNull`/`NeNull` filter types (the given value is ignored in this case).
 
+### Building a query string
+
+This package provides a `FilterBuilder` class with a `buildFilterQueryString` method. You can use this to convert a filter
+into a query string. Example:
+
+```typescript
+const queryString = FilterBuilder.buildFilterQueryString({
+  limit: 20,
+  offset: 30,
+  filter: [
+    { field: 'field1', type: FilterOperationType.NeNull, value: 'val1' },
+    { field: 'field2', type: FilterOperationType.InStrings, value: ['str1', 'str2'] },
+  ],
+  order: [
+    { field: 'field1', dir: 'asc' },
+    { field: 'field2', dir: 'desc' },
+  ],
+});
+// queryString is
+// ?offset=30&limit=20&filter[0][field]=field1&filter[0][type]=nenull&filter[0][value]=val1&filter[1][field]=field2&filter[1][type]=instrings&filter[1][value][0]=str1&filter[1][value][1]=str2&order[0][field]=field1&order[0][dir]=asc&order[1][field]=field2&order[1][dir]=desc
+```
+
 ### Filter types
+
 * `Eq`, `Ne` checks for strict (in)equality. Used for numbers and booleans.
 * `EqString`, `NeString` string (in)equality check for strings. Does not convert numbers or booleans unlike `Eq` and `Ne`.
 * `Lt`, `Lte`, `Gt`, `Gte` is used to filter numbers by checking whether they are greater/less than (or equal to) the value
@@ -55,6 +78,7 @@ npm i @chax-at/prisma-filter
 ```
 
 You also need to have `@nestjs/common` installed, currently version 6-9 is supported.
+This package also exports everything from the `prisma-filter-common` so it is not necessary to install both packages.
 
 To validate the user query input, you might have to provide your own interface implementations with the annotated
 validation constraints. If you're using class-validator and class-transformer, this definition can look like this
