@@ -1,6 +1,6 @@
 {
   "name": "@chax-at/prisma-filter-common",
-  "version": "2.2.0-rc.1",
+  "version": "2.2.0",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -11,7 +11,7 @@
     "publish": "npm publish --access public"
   },
   "author": "chax.at - Challenge Accepted",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "typescript": "^4.8.2"
   },
