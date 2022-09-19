@@ -20,10 +20,30 @@ Check the `FilterOperationType` enum to see all possible filter types. Note that
 treated as a `string`, `number` (or `string[]`/`number[]` for `in`-filters). If you want to filter by `null` instead
 of `'null'`, then use the `EqNull`/`NeNull` filter types (the given value is ignored in this case).
 
-### Building a query string
+### Building a filter
 
-This package provides a `FilterBuilder` class with a `buildFilterQueryString` method. You can use this to convert a filter
-into a query string. Example:
+This package provides a `FilterBuilder<T>` class which can be used to create the filter:
+
+```typescript
+import { FilterBuilder, FilterOperationType } from '@chax-at/prisma-filter-common';
+
+const filterBuilder = new FilterBuilder<User>() // create a new filter builder for User entities..
+        .addFilter('name', FilterOperationType.Ilike, '%Max%') // ...filter by name ilike '%Max%'
+        .orderBy('name', 'asc') // ...order by name, asc
+        .setPagesize(40) // ...paginate with a pagesize of 40
+        .requestPage(3); // ...return the third page
+const filter = filterBuilder.toFilter(); // get the resulting IFilter<User>
+const queryString = filterBuilder.toQueryString(); // get the resulting query string (as described below)
+
+// Note that you can also re-use the same filter if you just want to request a different page without changing filter or ordering:
+const firstPageFilter = filterBuilder.requestPage(1).toFilter();
+```
+
+#### Building a query string
+
+In the end, a query string is required which will be sent to the backend server. To build this query string,
+you can use `FilterBuilder.toQueryString()` when building a filter using the FilterBuilder as described above.
+However, it is also possible to transform an existing filter into a query string:
 
 ```typescript
 const queryString = FilterBuilder.buildFilterQueryString({
