@@ -29,7 +29,7 @@ import { FilterBuilder, FilterOperationType } from '@chax-at/prisma-filter-commo
 
 const filterBuilder = new FilterBuilder<User>() // create a new filter builder for User entities..
         .addFilter('name', FilterOperationType.Ilike, '%Max%') // ...filter by name ilike '%Max%'
-        .orderBy('name', 'asc') // ...order by name, asc
+        .addOrderBy('name', 'asc') // ...order by name, asc
         .setPageSize(40) // ...paginate with a pagesize of 40
         .requestPage(3); // ...return the third page
 const filter = filterBuilder.toFilter(); // get the resulting IFilter<User>

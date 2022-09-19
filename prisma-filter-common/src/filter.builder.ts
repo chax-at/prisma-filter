@@ -149,13 +149,16 @@ export class FilterBuilder<T = any> {
 
   /**
    * Adds an ordering to the result.
+   * If there are multiple entries with the same value in the given field, then later `orderBy`s are used.
+   * If no additional `orderBy`s are added, then the resulting order between them is unspecified (and may break pagination).
+   * Therefore, it is recommended to add a unique order field in the end (e.g. order by id if everything else is the same).
    *
    * @param field - The name of the field to order by
    * @param dir - FilterOrder direction
    *
    * @returns FilterBuilder for chaining
    */
-  public orderBy(field: keyof T & string, dir: FilterOrder): this {
+  public addOrderBy(field: keyof T & string, dir: FilterOrder): this {
     if(this.filter.order == null) {
       this.filter.order = [];
     }
