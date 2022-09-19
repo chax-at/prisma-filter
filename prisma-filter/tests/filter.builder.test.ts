@@ -21,7 +21,7 @@ test('Builds a simple filter', () => {
   const filterBuilder = new FilterBuilder() // create a new filter builder for User entities..
     .addFilter('name', FilterOperationType.Ilike, '%Max%') // ...filter by name ilike '%Max%'
     .orderBy('name', 'asc') // ...order by name, asc
-    .setPagesize(40) // ...paginate with a pagesize of 40
+    .setPageSize(40) // ...paginate with a pagesize of 40
     .requestPage(3); // ...return the third page
   const filter = filterBuilder.toFilter(); // get the resulting IFilter<User>
   expect(filter).toEqual({

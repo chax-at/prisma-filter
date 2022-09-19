@@ -122,12 +122,12 @@ export class FilterBuilder<T = any> {
    *
    * @returns FilterBuilder for chaining
    */
-  public setPagesize(pagesize: number): this {
+  public setPageSize(pagesize: number): this {
     return this.limitTo(pagesize);
   }
 
   /**
-   * Requests a specific page of the result set. Requires {@link setPagesize} to have been called before.
+   * Requests a specific page of the result set. Requires {@link setPageSize} to have been called before.
    * Automatically calculates the required offset for the given page.
    * page 1 returns the first page (not page 0).
    *
@@ -137,7 +137,7 @@ export class FilterBuilder<T = any> {
    */
   public requestPage(page: number): this {
     if(this.filter.limit == null) {
-      throw new Error('requestPage can only be called after calling setPagesize');
+      throw new Error('requestPage can only be called after calling setPageSize');
     }
     if(page <= 0) {
       throw new Error('Invalid argument: page must be at least 1');
