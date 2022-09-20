@@ -28,7 +28,7 @@ export class DirectFilterPipe<TDto, TWhereInput> implements PipeTransform<IFilte
    * @param compoundKeys - Keys in the form of 'user.firstname' (-to-one relation) or 'articles.some.name' (-to-many relation) which will be mapped to relations. Keys starting with ! are ignored.
    */
   constructor(keys: Array<keyof TDto & keyof TWhereInput & string>, compoundKeys: string[] = []) {
-    const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = {};
+    const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = Object.create(null);
     for(const key of keys) {
       mapping[key] = key;
     }

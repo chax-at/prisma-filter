@@ -29,7 +29,7 @@ export class AllFilterPipeUnsafe<TDto, TWhereInput> implements PipeTransform<IFi
    * @param compoundKeys - Keys in the form of 'user.firstname' (-to-one relation) or 'articles.some.name' (-to-many relation) which will be mapped to relations. Keys starting with ! are ignored.
    */
   constructor(compoundKeys: string[] = []) {
-    const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = {};
+    const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = Object.create(null);
     for(const untypedKey of compoundKeys) {
       (mapping as any)[untypedKey] = untypedKey;
     }

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2022-09-20
+### Added
+- Added new `FilterBuilder` functionality to build a filter using a builder pattern.
+
+### Changed
+- Removed source maps to reduce package size.
+- Objects are now created using `Object.create(null)` as additional hardening against prototype injections.
+
 ## [2.2.0] - 2022-08-31
 ### :warning: Breaking Changes
 - The `prisma-filter-common` should now be installed in `dependencies` instead of `devDependencies` so that the new `FilterBuilder` can be used.
@@ -47,6 +55,7 @@ export class SingleFilterOrder<T> implements ISingleOrder<T> {
 ### Removed
 - `IPaginatedDto` interface.
 
+[2.3.0]: https://github.com/chax-at/prisma-filter/compare/2.2.0...2.3.0
 [2.2.0]: https://github.com/chax-at/prisma-filter/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/chax-at/prisma-filter/compare/2.0.0...2.1.0
 [2.0.0]: https://github.com/chax-at/prisma-filter/releases/tag/2.0.0
