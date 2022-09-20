@@ -32,7 +32,7 @@ export class FilterParser<TDto, TWhereInput> {
   }
 
   private generateWhere(filter: Array<ISingleFilter<TDto>>): { [p in keyof TWhereInput]?: any } {
-    const where: { [p in keyof TWhereInput]?: any } = {};
+    const where: { [p in keyof TWhereInput]?: any } = Object.create(null);
     for(const filterEntry of filter) {
       const fieldName = filterEntry.field;
       let dbFieldName = this.mapping[filterEntry.field];
@@ -52,7 +52,7 @@ export class FilterParser<TDto, TWhereInput> {
 
       for(const dbFieldPart of dbFieldNameParts) {
         if(currentWhere[dbFieldPart] == null) {
-          currentWhere[dbFieldPart] = {};
+          currentWhere[dbFieldPart] = Object.create(null);
         }
         currentWhere = currentWhere[dbFieldPart];
       }
@@ -157,13 +157,13 @@ export class FilterParser<TDto, TWhereInput> {
       }
 
       const dbFieldNameParts = dbFieldName.split('.');
-      const sortObjToAdd = {};
+      const sortObjToAdd = Object.create(null);
       let currentObj: any = sortObjToAdd;
 
       for(let i = 0; i < dbFieldNameParts.length; i++) {
         const dbFieldPart = dbFieldNameParts[i];
         if(currentObj[dbFieldPart] == null) {
-          currentObj[dbFieldPart] = {};
+          currentObj[dbFieldPart] = Object.create(null);
         }
         if(i < dbFieldNameParts.length - 1) {
           currentObj = currentObj[dbFieldPart];

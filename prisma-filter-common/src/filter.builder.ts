@@ -66,7 +66,7 @@ export class FilterBuilder<T = any> {
     return parts.length === 0 ? null : parts.join('&');
   }
 
-  private readonly filter: IFilter<T> = {};
+  private readonly filter: IFilter<T> = Object.create(null);
 
   constructor() {}
 
