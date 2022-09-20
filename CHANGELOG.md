@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Removed source maps to reduce package size.
+- Objects are now created using `Object.create(null)` as additional hardening against prototype injections.
 
 ## [2.2.0] - 2022-08-31
 ### :warning: Breaking Changes
