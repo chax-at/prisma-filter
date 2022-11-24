@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Objects are now created using `Object.create(null)` as additional hardening against prototype injections.
 
 ## [2.2.0] - 2022-08-31
-### :warning: Breaking Changes
+### :warning: Important Changes
 - The `prisma-filter-common` should now be installed in `dependencies` instead of `devDependencies` so that the new `FilterBuilder` can be used.
   - This is not a real breaking change, but is important to use new features.
 
