@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.2.0] - 2022-08-31
 ### :warning: Important Changes
 - The `prisma-filter-common` should now be installed in `dependencies` instead of `devDependencies` so that the new `FilterBuilder` can be used.
-  - This is not a real breaking change, but is important to use new features.
+  - This is not a real breaking change, but is important to be able to use new features.
 
 ### Added
 - Added new `FilterBuilder` class to `prisma-filter-common` which provides a `buildFilterQueryString` method 
