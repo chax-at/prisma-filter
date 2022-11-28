@@ -15,7 +15,9 @@ import { FilterParser } from './filter.parser';
  * See filter.parser.ts for FilterParser implementation details.
  */
 @Injectable()
-export class AllFilterPipeUnsafe<TDto, TWhereInput> implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>> {
+export class AllFilterPipeUnsafe<TDto, TWhereInput>
+  implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>>
+{
   private readonly filterParser: FilterParser<TDto, TWhereInput>;
 
   /**
@@ -27,13 +29,19 @@ export class AllFilterPipeUnsafe<TDto, TWhereInput> implements PipeTransform<IFi
    * @example new AllFilterPipeUnsafe<any, Prisma.OrderInput>(['user.name', 'articles.some.name'])
    *
    * @param compoundKeys - Keys in the form of 'user.firstname' (-to-one relation) or 'articles.some.name' (-to-many relation) which will be mapped to relations. Keys starting with ! are ignored.
+   * @param defaultIncludes - Keys in the form of 'roles' (-to-many relation) or 'roles.permissions' (-to-many relation) which will include related records in prisma query by default.
    */
-  constructor(compoundKeys: string[] = []) {
-    const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = Object.create(null);
-    for(const untypedKey of compoundKeys) {
+  constructor(compoundKeys: string[] = [], defaultIncludes: string[] = []) {
+    const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } =
+      Object.create(null);
+    for (const untypedKey of compoundKeys) {
       (mapping as any)[untypedKey] = untypedKey;
     }
-    this.filterParser = new FilterParser<TDto, TWhereInput>(mapping, true);
+    this.filterParser = new FilterParser<TDto, TWhereInput>(
+      mapping,
+      true,
+      defaultIncludes
+    );
   }
 
   public transform(value: IFilter<TDto>): IGeneratedFilter<TWhereInput> {

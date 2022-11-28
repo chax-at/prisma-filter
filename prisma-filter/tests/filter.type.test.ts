@@ -54,49 +54,70 @@ test('Like', () => {
 
 test('Ilike', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.Ilike, value: '%val%' }],
+    filter: [
+      { field: 'test', type: FilterOperationType.Ilike, value: '%val%' },
+    ],
   });
-  expect(findOptions.where.test).toEqual({ contains: '%val%', mode: 'insensitive' });
+  expect(findOptions.where.test).toEqual({
+    contains: '%val%',
+    mode: 'insensitive',
+  });
 });
 
 test('In', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.In, value: ['val1', 'val2'] }],
+    filter: [
+      { field: 'test', type: FilterOperationType.In, value: ['val1', 'val2'] },
+    ],
   });
   expect(findOptions.where.test).toEqual({ in: ['val1', 'val2'] });
 });
 
 test('InStrings', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.InStrings, value: ['val1', 'val2'] }],
+    filter: [
+      {
+        field: 'test',
+        type: FilterOperationType.InStrings,
+        value: ['val1', 'val2'],
+      },
+    ],
   });
   expect(findOptions.where.test).toEqual({ in: ['val1', 'val2'] });
 });
 
 test('EqNull', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.EqNull, value: 'irrelevant' }],
+    filter: [
+      { field: 'test', type: FilterOperationType.EqNull, value: 'irrelevant' },
+    ],
   });
   expect(findOptions.where.test).toEqual({ equals: null });
 });
 
 test('NeNull', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.NeNull, value: 'irrelevant' }],
+    filter: [
+      { field: 'test', type: FilterOperationType.NeNull, value: 'irrelevant' },
+    ],
   });
   expect(findOptions.where.test).toEqual({ not: null });
 });
 
 test('EqString', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.EqString, value: 'value' }],
+    filter: [
+      { field: 'test', type: FilterOperationType.EqString, value: 'value' },
+    ],
   });
   expect(findOptions.where.test).toEqual({ equals: 'value' });
 });
 
 test('NeString', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.NeString, value: 'value' }],
+    filter: [
+      { field: 'test', type: FilterOperationType.NeString, value: 'value' },
+    ],
   });
   expect(findOptions.where.test).toEqual({ not: 'value' });
 });

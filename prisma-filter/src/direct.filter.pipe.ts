@@ -15,7 +15,9 @@ import { FilterParser } from './filter.parser';
  * See filter.parser.ts for FilterParser implementation details.
  */
 @Injectable()
-export class DirectFilterPipe<TDto, TWhereInput> implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>> {
+export class DirectFilterPipe<TDto, TWhereInput>
+  implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>>
+{
   private readonly filterParser: FilterParser<TDto, TWhereInput>;
 
   /**
@@ -26,16 +28,26 @@ export class DirectFilterPipe<TDto, TWhereInput> implements PipeTransform<IFilte
    *
    * @param keys - Keys that are mapped 1:1
    * @param compoundKeys - Keys in the form of 'user.firstname' (-to-one relation) or 'articles.some.name' (-to-many relation) which will be mapped to relations. Keys starting with ! are ignored.
+   * @param defaultIncludes - Keys in the form of 'roles' (-to-many relation) or 'roles.permissions' (-to-many relation) which will include related records in prisma query by default.
    */
-  constructor(keys: Array<keyof TDto & keyof TWhereInput & string>, compoundKeys: string[] = []) {
-    const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = Object.create(null);
-    for(const key of keys) {
+  constructor(
+    keys: Array<keyof TDto & keyof TWhereInput & string>,
+    compoundKeys: string[] = [],
+    defaultIncludes: string[] = []
+  ) {
+    const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } =
+      Object.create(null);
+    for (const key of keys) {
       mapping[key] = key;
     }
-    for(const untypedKey of compoundKeys) {
+    for (const untypedKey of compoundKeys) {
       (mapping as any)[untypedKey] = untypedKey;
     }
-    this.filterParser = new FilterParser<TDto, TWhereInput>(mapping);
+    this.filterParser = new FilterParser<TDto, TWhereInput>(
+      mapping,
+      false,
+      defaultIncludes
+    );
   }
 
   public transform(value: IFilter<TDto>): IGeneratedFilter<TWhereInput> {
