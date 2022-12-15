@@ -44,13 +44,34 @@ test('Builds a simple filter', () => {
 
 test('Builds a simple sort filter', () => {
   const filterBuilder = new FilterBuilder() // create a new filter builder for User entities..
-    .addSortBy('name', 'asc') // ...order by name, asc
+    .addSortBy('name', 'asc'); // ...order by name, asc
   const filter = filterBuilder.toFilter(); // get the resulting IFilter<User>
   expect(filter).toEqual({
     sort: [{ field: 'name', dir: 'asc' }],
   });
   expect(filterBuilder.toQueryString()).toEqual(
     '?sort[0][field]=name&sort[0][dir]=asc'
+  );
+});
+
+test('Builds a simple cursor filter', () => {
+  const filterBuilder = new FilterBuilder() // create a new filter builder for User entities..
+    .addCursor('id', 3)
+    .addSortBy('id', 'asc') // ...order by name, asc
+    .limitTo(2)
+    .skip(0);
+  const filter = filterBuilder.toFilter(); // get the resulting IFilter<User>
+  console.log(filter);
+  expect(filter).toEqual({
+    filter: [],
+    cursor: { field: 'id', value: 3 },
+    sort: [{ field: 'id', dir: 'asc' }],
+    limit: 2,
+    skip: 0,
+  });
+  console.log(filterBuilder.toQueryString());
+  expect(filterBuilder.toQueryString()).toEqual(
+    '?limit=2&skip=0&sort[0][field]=id&sort[0][dir]=asc&cursor[field]=id&cursor[value]=3'
   );
 });
 

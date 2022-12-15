@@ -23,24 +23,31 @@ import { FilterParser } from './filter.parser';
  * See filter/filter.parser.ts for FilterParser implementation details.
  */
 @Injectable()
-export class FilterPipe<TDto, TWhereInput>
-  implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>>
+export class FilterPipe<
+  TDto,
+  TFindManyArgs extends {
+    where?: unknown;
+    select?: unknown;
+    orderBy?: unknown;
+    cursor?: unknown;
+  }
+> implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TFindManyArgs>>
 {
-  private readonly filterParser: FilterParser<TDto, TWhereInput>;
+  private readonly filterParser: FilterParser<TDto, TFindManyArgs>;
 
   constructor(
-    mapping: { [p in keyof TDto]?: keyof TWhereInput & string },
+    mapping: { [p in keyof TDto]?: keyof TFindManyArgs['where'] & string },
     allowAllFields = false,
     defaultIncludes: string[] = []
   ) {
-    this.filterParser = new FilterParser<TDto, TWhereInput>(
+    this.filterParser = new FilterParser<TDto, TFindManyArgs>(
       mapping,
       allowAllFields,
       defaultIncludes
     );
   }
 
-  public transform(value: IFilter<TDto>): IGeneratedFilter<TWhereInput> {
+  public transform(value: IFilter<TDto>): IGeneratedFilter<TFindManyArgs> {
     return {
       ...value,
       findOptions: this.filterParser.generateQueryFindOptions(value),

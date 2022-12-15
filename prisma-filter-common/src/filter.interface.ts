@@ -7,7 +7,7 @@ export interface IFilter<T = any> {
   offset?: number;
   limit?: number;
   page?: number;
-  cursor?: string;
+  cursor?: ISingleCursor<T>;
   skip?: number;
   select?: string[];
 }
@@ -21,4 +21,9 @@ export interface ISingleFilter<T = any> {
 export interface ISingleOrder<T = any> {
   field: keyof T & string;
   dir: FilterOrder;
+}
+
+export interface ISingleCursor<T = any>  {
+  field: keyof T & string;
+  value: any;
 }

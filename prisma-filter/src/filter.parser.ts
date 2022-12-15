@@ -2,6 +2,7 @@ import {
   FilterOperationType,
   FilterOrder,
   IFilter,
+  ISingleCursor,
   ISingleFilter,
   ISingleOrder,
 } from '@chax-at/prisma-filter-common';
@@ -13,7 +14,15 @@ import {
 import { IntFilter, StringFilter } from './prisma.type';
 import { set } from 'lodash';
 
-export class FilterParser<TDto, TWhereInput> {
+export class FilterParser<
+  TDto,
+  TFindManyArgs extends {
+    where?: unknown;
+    select?: unknown;
+    orderBy?: unknown;
+    cursor?: unknown;
+  }
+> {
   /**
    *
    * @param mapping - An object mapping from Dto key to database key
@@ -22,7 +31,7 @@ export class FilterParser<TDto, TWhereInput> {
    */
   constructor(
     private readonly mapping: {
-      [p in keyof TDto]?: keyof TWhereInput & string;
+      [p in keyof TDto]?: keyof TFindManyArgs['where'] & string;
     },
     private readonly allowAllFields = false,
     private readonly defaultIncludes?: string[]
@@ -30,7 +39,7 @@ export class FilterParser<TDto, TWhereInput> {
 
   public generateQueryFindOptions(
     filterDto: IFilter<TDto>
-  ): GeneratedFindOptions<TWhereInput> {
+  ): GeneratedFindOptions<TFindManyArgs> {
     if (filterDto.filter == null) {
       filterDto.filter = [];
     }
@@ -57,13 +66,15 @@ export class FilterParser<TDto, TWhereInput> {
       filterDto.select,
       this.defaultIncludes
     );
+    const cursor = this.generateCursor(filterDto.cursor);
     return {
-      where: where as TWhereInput,
+      where: where as TFindManyArgs['where'],
       skip: skip,
       take: filterDto.limit,
       orderBy: generatedOrder,
       select: selectIncludeOptions['select'],
       include: selectIncludeOptions['include'],
+      cursor: cursor,
     };
   }
 
@@ -88,16 +99,18 @@ export class FilterParser<TDto, TWhereInput> {
   }
 
   private generateWhere(filter: Array<ISingleFilter<TDto>>): {
-    [p in keyof TWhereInput]?: any;
+    [p in keyof TFindManyArgs['where']]?: any;
   } {
-    const where: { [p in keyof TWhereInput]?: any } = Object.create(null);
+    const where: { [p in keyof TFindManyArgs['where']]?: any } =
+      Object.create(null);
     for (const filterEntry of filter) {
       const fieldName = filterEntry.field;
       let dbFieldName = this.mapping[filterEntry.field];
 
       if (dbFieldName == null) {
         if (this.allowAllFields && !fieldName.includes('.')) {
-          dbFieldName = fieldName as unknown as keyof TWhereInput & string;
+          dbFieldName = fieldName as unknown as keyof TFindManyArgs['where'] &
+            string;
         } else {
           throw new Error(`${fieldName} is not filterable`);
         }
@@ -229,7 +242,7 @@ export class FilterParser<TDto, TWhereInput> {
 
   private generateOrder(
     order: Array<ISingleOrder<TDto>>
-  ): Array<{ [p in keyof TWhereInput]?: FilterOrder }> {
+  ): Array<TFindManyArgs['orderBy']> {
     const generatedOrder = [];
     for (const orderEntry of order) {
       const fieldName = orderEntry.field;
@@ -237,7 +250,8 @@ export class FilterParser<TDto, TWhereInput> {
 
       if (dbFieldName == null) {
         if (this.allowAllFields && !fieldName.includes('.')) {
-          dbFieldName = fieldName as unknown as keyof TWhereInput & string;
+          dbFieldName = fieldName as unknown as keyof TFindManyArgs['where'] &
+            string;
         } else {
           throw new Error(`${fieldName} is not orderable`);
         }
@@ -265,7 +279,42 @@ export class FilterParser<TDto, TWhereInput> {
 
       generatedOrder.push(orderObjToAdd);
     }
-    return generatedOrder as Array<{ [p in keyof TWhereInput]?: FilterOrder }>;
+    return generatedOrder as Array<{
+      [p in keyof TFindManyArgs['where']]?: FilterOrder;
+    }>;
+  }
+
+  private generateCursor(
+    cursor?: ISingleCursor<TDto>
+  ): TFindManyArgs['cursor'] {
+    if (!cursor) {
+      return undefined;
+    }
+
+    const fieldName = cursor.field;
+    let dbFieldName = this.mapping[fieldName];
+
+    if (dbFieldName == null) {
+      if (this.allowAllFields && !fieldName.includes('.')) {
+        dbFieldName = fieldName as unknown as keyof TFindManyArgs['cursor'] &
+          string;
+      } else {
+        throw new Error(`${fieldName} is not orderable`);
+      }
+    }
+
+    if (dbFieldName.length > 0 && dbFieldName[0] === '!') {
+      return undefined;
+    }
+
+    const generatedcursor = {} as unknown as {
+      [p in keyof TFindManyArgs['cursor']]?: any;
+    };
+    set(generatedcursor, cursor.field, cursor.value);
+
+    return generatedcursor as {
+      [p in keyof TFindManyArgs['cursor']]?: any;
+    };
   }
 
   // select parsing

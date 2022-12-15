@@ -1,5 +1,9 @@
 import { FilterOperationType, FilterOrder } from './filter.enum';
-import { IFilter, ISingleFilter, ISingleOrder } from './filter.interface';
+import {
+  IFilter,
+  ISingleFilter,
+  ISingleOrder,
+} from './filter.interface';
 
 export class FilterBuilder<T = any> {
   /**
@@ -47,6 +51,15 @@ export class FilterBuilder<T = any> {
       : null;
     if (sortQuery != null) {
       parts.push(sortQuery);
+    }
+    const cursorQuery = filter.cursor
+      ? 'cursor[field]=' +
+        filter.cursor.field.toString() +
+        '&cursor[value]=' +
+        filter.cursor.value.toString()
+      : null;
+    if (cursorQuery != null) {
+      parts.push(cursorQuery);
     }
 
     if (parts.length === 0) return '';
@@ -126,6 +139,24 @@ export class FilterBuilder<T = any> {
       this.filter.filter = [];
     }
     this.filter.filter.push({ field, type, value });
+
+    return this;
+  }
+
+  /**
+   * Adds a single filter for one field.
+   *
+   * @param field - The name of the field to filter by
+   * @param type - The type of filter to apply
+   * @param value - The value to filter for
+   *
+   * @returns FilterBuilder for chaining
+   */
+  public addCursor(field: keyof T & string, value: any): this {
+    if (this.filter.filter == null) {
+      this.filter.filter = [];
+    }
+    this.filter.cursor = { field, value };
 
     return this;
   }

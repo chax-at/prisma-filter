@@ -14,6 +14,7 @@ import {
   FilterOperationType,
   FilterOrder,
   IFilter,
+  ISingleCursor,
   ISingleFilter,
   ISingleOrder,
 } from '.';
@@ -47,6 +48,19 @@ export class SingleFilterOrder<T> implements ISingleOrder<T> {
   @Expose()
   @IsIn(['asc', 'desc'])
   dir!: FilterOrder;
+}
+
+export class SingleCursor<T> implements ISingleCursor<T> {
+  constructor(partial: Partial<SingleCursor<T>>) {
+    Object.assign(this, partial);
+  }
+  @Expose()
+  @IsString()
+  field!: keyof T & string;
+
+  @Expose()
+  @IsDefined()
+  value: any;
 }
 
 export class Filter<T = any> implements IFilter<T> {
@@ -84,9 +98,10 @@ export class Filter<T = any> implements IFilter<T> {
   @IsOptional()
   page?: number;
 
-  @IsString()
+  @ValidateNested({ each: true })
+  @Type(() => SingleCursor)
   @IsOptional()
-  cursor?: string;
+  cursor?: SingleCursor<T>;
 
   @Type(() => Number)
   @IsInt()

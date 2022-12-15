@@ -179,6 +179,7 @@ export class SomeController {
     @Query(new DirectFilterPipe<any, Prisma.OrderWhereInput>(
       ['id', 'status', 'createdAt', 'refundStatus', 'refundedPrice', 'paymentDate', 'totalPrice', 'paymentMethod'],
       ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
+      ['user'] // a list of relations can now be passed to a new FilterPipe to define a set of default included records in the prisma query
     )) filterDto: FilterDto<Prisma.OrderWhereInput>,
   ) {
     return this.someService.getOrders(filterDto.findOptions);
