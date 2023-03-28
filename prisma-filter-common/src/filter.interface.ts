@@ -2,9 +2,14 @@ import { FilterOperationType, FilterOrder } from './filter.enum';
 
 export interface IFilter<T = any> {
   filter?: Array<ISingleFilter<T>>;
+  sort?: Array<ISingleOrder<T>>;
   order?: Array<ISingleOrder<T>>;
   offset?: number;
   limit?: number;
+  page?: number;
+  cursor?: ISingleCursor<T>;
+  skip?: number;
+  select?: string[];
 }
 
 export interface ISingleFilter<T = any> {
@@ -16,4 +21,9 @@ export interface ISingleFilter<T = any> {
 export interface ISingleOrder<T = any> {
   field: keyof T & string;
   dir: FilterOrder;
+}
+
+export interface ISingleCursor<T = any>  {
+  field: keyof T & string;
+  value: any;
 }

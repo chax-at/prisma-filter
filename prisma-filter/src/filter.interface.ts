@@ -1,14 +1,42 @@
-import { FilterOrder, IFilter } from '@chax-at/prisma-filter-common';
+import {
+  FilterOrder,
+  IFilter,
+} from '@chax-at/prisma-filter-common';
 
-export type GeneratedFindOptions<TWhereInput> = {
-  where: TWhereInput;
+export type GeneratedFindOptions<
+  TFindManyArgs extends {
+    where?: unknown;
+    select?: unknown;
+    orderBy?: unknown;
+    cursor?: unknown;
+  }
+> = {
+  where: TFindManyArgs['where'];
   skip: number | undefined;
   take: number | undefined;
-  // This can be "any" because we might order by relations, therefore this will be an object
-  orderBy: Array<{ [p in keyof TWhereInput]?: FilterOrder | any }>;
+  cursor: TFindManyArgs['cursor'];
+  // This can be "any" because we might sort by relations, therefore this will be an object
+  orderBy: TFindManyArgs['orderBy'];
+  select?: TRecursiveField;
+  include?: TRecursiveField;
 };
 
+export interface IGeneratedFilter<
+  TFindManyArgs extends {
+    where?: unknown;
+    select?: unknown;
+    orderBy?: unknown;
+    cursor?: unknown;
+  }
+> extends IFilter {
+  findOptions: GeneratedFindOptions<TFindManyArgs>;
+}
 
-export interface IGeneratedFilter<TWhereInput> extends IFilter {
-  findOptions: GeneratedFindOptions<TWhereInput>;
+export type TRecursiveField = {
+  [key: string]: boolean | TRecursiveField;
+};
+
+export interface IParsedQueryParams {
+  select?: TRecursiveField;
+  include?: TRecursiveField;
 }

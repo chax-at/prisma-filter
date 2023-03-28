@@ -14,12 +14,14 @@
   "author": "chax.at - Challenge Accepted",
   "license": "MIT",
   "dependencies": {
-    "@chax-at/prisma-filter-common": "^2.3.0"
+    "@chax-at/prisma-filter-common": "^2.3.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@swc/core": "^1.2.165",
     "@swc/jest": "^0.2.20",
     "@types/jest": "^27.4.1",
+    "@types/lodash": "^4.14.190",
     "@types/node": "^16.11.26",
     "jest": "^27.5.1",
     "typescript": "^4.8.2"
