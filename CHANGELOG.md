@@ -4,13 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2023-04-03
+### Changed
+- `FilterBuilder` now builds value arrays in the form of `filter[0][value][]=13` instead of `filter[0][value][0]=13` to
+  save some characters and fix a bug where large arrays might be parsed as objects instead of arrays. 
+
+
 ## [2.3.0] - 2022-09-20
 ### Added
 - Added new `FilterBuilder` functionality to build a filter using a builder pattern.
 
 ### Changed
 - Removed source maps to reduce package size.
-- Objects are now created using `Object.create(null)` as additional hardening against prototype injections.
+- Objects are now created using `Object.create(null)` as additional hardening against prototype pollution.
 
 ## [2.2.0] - 2022-08-31
 ### :warning: Important Changes
@@ -55,6 +61,7 @@ export class SingleFilterOrder<T> implements ISingleOrder<T> {
 ### Removed
 - `IPaginatedDto` interface.
 
+[2.4.0]: https://github.com/chax-at/prisma-filter/compare/2.3.0...2.4.0
 [2.3.0]: https://github.com/chax-at/prisma-filter/compare/2.2.0...2.3.0
 [2.2.0]: https://github.com/chax-at/prisma-filter/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/chax-at/prisma-filter/compare/2.0.0...2.1.0

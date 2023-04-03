@@ -51,11 +51,11 @@ export class FilterBuilder<T = any> {
           }
           for(let y = 0; y < value.length; y++) {
             /**
-             * & filter[x][value][y]=<value>
+             * & filter[x][value][]=<value>
              */
             const valueY = value[y];
             parts.push(
-              `${encodeURIComponent(paramName)}[${i}][${encodeURIComponent(key)}][${y}]=${encodeURIComponent(valueY != null ? valueY.toString() : '')}`,
+              `${encodeURIComponent(paramName)}[${i}][${encodeURIComponent(key)}][]=${encodeURIComponent(valueY != null ? valueY.toString() : '')}`,
             );
           }
         } else {

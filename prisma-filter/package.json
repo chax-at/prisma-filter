@@ -14,7 +14,7 @@
   "author": "chax.at - Challenge Accepted",
   "license": "MIT",
   "dependencies": {
-    "@chax-at/prisma-filter-common": "^2.3.0"
+    "@chax-at/prisma-filter-common": "^2.4.0-rc.1"
   },
   "devDependencies": {
     "@swc/core": "^1.2.165",
