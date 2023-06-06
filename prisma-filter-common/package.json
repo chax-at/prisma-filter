@@ -1,6 +1,6 @@
 {
   "name": "@chax-at/prisma-filter-common",
-  "version": "2.4.0-rc.1",
+  "version": "2.4.0",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",

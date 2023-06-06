@@ -101,7 +101,8 @@ export class FilterParser<TDto, TWhereInput> {
       else if (rawValue === 'false') return false;
     }
 
-    if(type === FilterOperationType.Like || type === FilterOperationType.EqString || type === FilterOperationType.NeString) {
+    if(type === FilterOperationType.Like  || type === FilterOperationType.Ilike
+      || type === FilterOperationType.EqString || type === FilterOperationType.NeString) {
       // Never cast this value for a like filter because this only applies to strings
       return rawValue;
     }

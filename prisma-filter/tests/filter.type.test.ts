@@ -52,11 +52,25 @@ test('Like', () => {
   expect(findOptions.where.test).toEqual({ contains: '%val%' });
 });
 
+test('Like for number', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.Like, value: '5' }],
+  });
+  expect(findOptions.where.test).toEqual({ contains: '5' });
+});
+
 test('Ilike', () => {
   const findOptions = filterParser.generateQueryFindOptions({
     filter: [{ field: 'test', type: FilterOperationType.Ilike, value: '%val%' }],
   });
   expect(findOptions.where.test).toEqual({ contains: '%val%', mode: 'insensitive' });
+});
+
+test('Ilike for number', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.Ilike, value: '5' }],
+  });
+  expect(findOptions.where.test).toEqual({ contains: '5', mode: 'insensitive' });
 });
 
 test('In', () => {
