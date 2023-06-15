@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2023-06-16
+### Added
+- Added support for NestJS 10
+
 ## [2.4.0] - 2023-06-06
 ### Fixed
 - `Ilike` filter now correctly always converts the value to a string (like `Like`)
@@ -64,6 +68,7 @@ export class SingleFilterOrder<T> implements ISingleOrder<T> {
 ### Removed
 - `IPaginatedDto` interface.
 
+[2.5.0]: https://github.com/chax-at/prisma-filter/compare/2.4.0...2.5.0
 [2.4.0]: https://github.com/chax-at/prisma-filter/compare/2.3.0...2.4.0
 [2.3.0]: https://github.com/chax-at/prisma-filter/compare/2.2.0...2.3.0
 [2.2.0]: https://github.com/chax-at/prisma-filter/compare/2.1.0...2.2.0

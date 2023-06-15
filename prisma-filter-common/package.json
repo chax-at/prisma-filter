@@ -13,7 +13,7 @@
   "author": "chax.at - Challenge Accepted",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^4.8.2"
+    "typescript": "^5.1.3"
   },
   "files": [
     "/lib"
