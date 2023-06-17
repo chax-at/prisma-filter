@@ -97,7 +97,7 @@ First, install the package by running
 npm i @chax-at/prisma-filter
 ```
 
-You also need to have `@nestjs/common` installed, currently version 6-9 is supported.
+You also need to have `@nestjs/common` installed, currently version 6-10 is supported.
 This package also exports everything from the `prisma-filter-common` so it is not necessary to install both packages.
 
 To validate the user query input, you might have to provide your own interface implementations with the annotated
