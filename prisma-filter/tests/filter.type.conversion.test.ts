@@ -74,3 +74,17 @@ test('In number array string', () => {
   });
   expect(findOptions.where.test).toEqual({ in: ['1', '2', '3.5'] });
 });
+
+test('Not in number array', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.NotIn, value: ['1', '2', '3.5'] }],
+  });
+  expect(findOptions.where.test).toEqual({ notIn: [1, 2, 3.5] });
+});
+
+test('Not in number array string', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.NotInStrings, value: ['1', '2', '3.5'] }],
+  });
+  expect(findOptions.where.test).toEqual({ notIn: ['1', '2', '3.5'] });
+});

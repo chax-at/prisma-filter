@@ -63,7 +63,11 @@ export class FilterParser<TDto, TWhereInput> {
 
   private generateWhereValue(type: FilterOperationType, value: any): { [p in keyof IntFilter | keyof StringFilter]?: any } {
     const queryValue = this.getFormattedQueryValueForType(value, type);
-    if(type === FilterOperationType.Ilike) {
+    if(
+      [FilterOperationType.Ilike, FilterOperationType.IContains,
+       FilterOperationType.ISearch, FilterOperationType.IStartsWith,
+       FilterOperationType.IEndsWith].includes(type)
+    ) {
       return {
         [this.getOpByType(type)]: queryValue,
         mode: 'insensitive',
@@ -79,8 +83,8 @@ export class FilterParser<TDto, TWhereInput> {
       if(rawValue.some(value => typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean')) {
         throw new Error(`Array filter value must be an Array<string|number|boolean>`);
       }
-      if(type === FilterOperationType.InStrings) return rawValue;
-      if(type !== FilterOperationType.In) {
+      if(type === FilterOperationType.InStrings || type === FilterOperationType.NotInStrings) return rawValue;
+      if(type !== FilterOperationType.In && type !== FilterOperationType.NotIn) {
         throw new Error(`Filter type ${type} does not support array values`);
       }
       return rawValue.map(v => !isNaN(+v) ? +v : v);
@@ -97,12 +101,14 @@ export class FilterParser<TDto, TWhereInput> {
 
     if(type === FilterOperationType.Eq || type === FilterOperationType.Ne) {
       // If we filter for equality and the value looks like a boolean, then cast it into a boolean
-      if(rawValue === 'true') return true;
-      else if (rawValue === 'false') return false;
+      if(rawValue === 'true') {
+        return true;
+      } else if(rawValue === 'false') return false;
     }
 
-    if(type === FilterOperationType.Like  || type === FilterOperationType.Ilike
-      || type === FilterOperationType.EqString || type === FilterOperationType.NeString) {
+    if([FilterOperationType.Like, FilterOperationType.Ilike, FilterOperationType.Contains, FilterOperationType.IContains,
+    FilterOperationType.EqString, FilterOperationType.NeString, FilterOperationType.StartsWith, FilterOperationType.IStartsWith,
+    FilterOperationType.EndsWith, FilterOperationType.IEndsWith, FilterOperationType.Search, FilterOperationType.ISearch].includes(type)) {
       // Never cast this value for a like filter because this only applies to strings
       return rawValue;
     }
@@ -130,10 +136,24 @@ export class FilterParser<TDto, TWhereInput> {
         return 'not';
       case FilterOperationType.Like:
       case FilterOperationType.Ilike:
+      case FilterOperationType.Contains:
+      case FilterOperationType.IContains:
         return 'contains';
+      case FilterOperationType.StartsWith:
+      case FilterOperationType.IStartsWith:
+        return 'startsWith';
+      case FilterOperationType.EndsWith:
+      case FilterOperationType.IEndsWith:
+        return 'endsWith';
+      case FilterOperationType.Search:
+      case FilterOperationType.ISearch:
+        return 'search' as any; // This is a preview feature
       case FilterOperationType.In:
       case FilterOperationType.InStrings:
         return 'in';
+      case FilterOperationType.NotIn:
+      case FilterOperationType.NotInStrings:
+        return 'notIn';
       default:
         throw new Error(`${type} is not a valid filter type`);
     }

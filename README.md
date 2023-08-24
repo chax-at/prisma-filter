@@ -67,10 +67,13 @@ const queryString = FilterBuilder.buildFilterQueryString({
 * `Eq`, `Ne` checks for strict (in)equality. Used for numbers and booleans.
 * `EqString`, `NeString` string (in)equality check for strings. Does not convert numbers or booleans unlike `Eq` and `Ne`.
 * `Lt`, `Lte`, `Gt`, `Gte` is used to filter numbers by checking whether they are greater/less than (or equal to) the value
-* `Like` is transformed into a postgres `like`, used to filter for strings. Use `%` as a wildcard, e.g. `%Max%` to find partial matches.
-* `Ilike` is like `Like` but case-insensitive
+* `Contains` is transformed into a Prisma `contains`, used to filter for strings. Use `%` as a wildcard, e.g. `%Max%` to find partial matches.
+* `IContains` is like `Contains` but case-insensitive
+* `StartsWith`, `EndsWith`, `Search` match the corresponding [Prisma operation](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#filter-conditions-and-operators). Prefix these filters with `I` if you want to filter case-insensitive (e.g. `IStartsWith`)
 * `In` checks whether the value is in the given numbers array. Use `InStrings` for string arrays.
 * `InStrings` checks whether value is in the given string array.
+* `NotIn` checks whether the value is NOT in the given numbers array. Use `NotInStrings` for string arrays.
+* `NotInStrings` checks whether value is NOT in the given string array.
 * `EqNull`, `NeNull` checks whether the value is null or not null. Must be used instead of `Eq`, `Ne` because otherwise `null` would be treated as string
 
 ### Filter value types
@@ -97,7 +100,7 @@ First, install the package by running
 npm i @chax-at/prisma-filter
 ```
 
-You also need to have `@nestjs/common` installed, currently version 6-10 is supported.
+You also need to have `@nestjs/common` installed, currently version 6-9 is supported.
 This package also exports everything from the `prisma-filter-common` so it is not necessary to install both packages.
 
 To validate the user query input, you might have to provide your own interface implementations with the annotated
@@ -255,9 +258,9 @@ export class SomeController {
 
   @Get()
   public async getOrders(
-    @Query(new AllFilterPipeUnsafe<any, Prisma.OrderWhereInput>(
-      ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
-    )) filterDto: FilterDto<Prisma.OrderWhereInput>,
+          @Query(new AllFilterPipeUnsafe<any, Prisma.OrderWhereInput>(
+                  ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
+          )) filterDto: FilterDto<Prisma.OrderWhereInput>,
   ) {
     return this.someService.getOrders(filterDto.findOptions);
   }

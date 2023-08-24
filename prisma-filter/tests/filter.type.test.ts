@@ -47,28 +47,28 @@ test('Gte', () => {
 
 test('Like', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.Like, value: '%val%' }],
+    filter: [{ field: 'test', type: FilterOperationType.Contains, value: '%val%' }],
   });
   expect(findOptions.where.test).toEqual({ contains: '%val%' });
 });
 
 test('Like for number', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.Like, value: '5' }],
+    filter: [{ field: 'test', type: FilterOperationType.Contains, value: '5' }],
   });
   expect(findOptions.where.test).toEqual({ contains: '5' });
 });
 
 test('Ilike', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.Ilike, value: '%val%' }],
+    filter: [{ field: 'test', type: FilterOperationType.IContains, value: '%val%' }],
   });
   expect(findOptions.where.test).toEqual({ contains: '%val%', mode: 'insensitive' });
 });
 
 test('Ilike for number', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.Ilike, value: '5' }],
+    filter: [{ field: 'test', type: FilterOperationType.IContains, value: '5' }],
   });
   expect(findOptions.where.test).toEqual({ contains: '5', mode: 'insensitive' });
 });
@@ -113,4 +113,47 @@ test('NeString', () => {
     filter: [{ field: 'test', type: FilterOperationType.NeString, value: 'value' }],
   });
   expect(findOptions.where.test).toEqual({ not: 'value' });
+});
+
+test('StartsWith', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.StartsWith, value: '5' }],
+  });
+  expect(findOptions.where.test).toEqual({ startsWith: '5' });
+});
+
+test('IStartsWith', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.IStartsWith, value: '5' }],
+  });
+  expect(findOptions.where.test).toEqual({ startsWith: '5', mode: 'insensitive' });
+});
+
+test('EndsWith', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.EndsWith, value: '5' }],
+  });
+  expect(findOptions.where.test).toEqual({ endsWith: '5' });
+});
+
+test('IEndsWith', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.IEndsWith, value: '5' }],
+  });
+  expect(findOptions.where.test).toEqual({ endsWith: '5', mode: 'insensitive' });
+});
+
+
+test('Search', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.Search, value: '5' }],
+  });
+  expect(findOptions.where.test).toEqual({ search: '5' });
+});
+
+test('ISearch', () => {
+  const findOptions = filterParser.generateQueryFindOptions({
+    filter: [{ field: 'test', type: FilterOperationType.ISearch, value: '5' }],
+  });
+  expect(findOptions.where.test).toEqual({ search: '5', mode: 'insensitive' });
 });

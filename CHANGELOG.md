@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2023-08-24
+### :warning: Breaking Changes
+Added new filter operations. Make sure that both the common-package and the prisma-filter-package in your Frontend and Backend are on version 3.
+
+### Added
+- Added `(I)Search`, `(I)StartsWith`, `(I)EndsWith`, `(I)Contains`, `NotIn`, `NotInStrings` filters.
+- `(I)Like` is now deprecated, `(I)Contains` should be used instead to better match the Prisma operation.
+
 ## [2.5.0] - 2023-06-16
 ### Added
 - Added support for NestJS 10
