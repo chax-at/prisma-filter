@@ -1,14 +1,13 @@
 {
   "name": "@chax-at/prisma-filter-common",
-  "version": "3.0.0-rc.1",
+  "version": "3.0.0",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "repository": "github:chax-at/prisma-filter",
   "scripts": {
     "prepare": "npm run build",
-    "build": "tsc",
-    "publish": "npm publish --access public"
+    "build": "tsc"
   },
   "author": "chax.at - Challenge Accepted",
   "license": "MIT",
