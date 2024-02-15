@@ -13,9 +13,10 @@ test('Builds a simple filter query string', () => {
       { field: 'field2', dir: 'desc' },
     ],
   });
-  expect(queryString).toEqual('?offset=30&limit=20&filter[0][field]=field1&filter[0][type]=nenull&filter[0][value]=val1&filter[1][field]=field2&filter[1][type]=instrings&filter[1][value][]=str1&filter[1][value][]=str2&order[0][field]=field1&order[0][dir]=asc&order[1][field]=field2&order[1][dir]=desc');
+  expect(queryString).toEqual(
+    '?offset=30&limit=20&filter[0][field]=field1&filter[0][type]=nenull&filter[0][value]=val1&filter[1][field]=field2&filter[1][type]=instrings&filter[1][value][]=str1&filter[1][value][]=str2&order[0][field]=field1&order[0][dir]=asc&order[1][field]=field2&order[1][dir]=desc',
+  );
 });
-
 
 test('Builds a simple filter', () => {
   const filterBuilder = new FilterBuilder() // create a new filter builder for User entities...
@@ -25,7 +26,7 @@ test('Builds a simple filter', () => {
     .requestPage(3); // ...return the third page
   const filter = filterBuilder.toFilter(); // get the resulting IFilter<User>
   expect(filter).toEqual({
-    filter: [{ field: 'name', type: FilterOperationType.Ilike, value: '%Max%'}],
+    filter: [{ field: 'name', type: FilterOperationType.Ilike, value: '%Max%' }],
     order: [{ field: 'name', dir: 'asc' }],
     limit: 40,
     offset: 80,

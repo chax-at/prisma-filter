@@ -30,13 +30,17 @@ test('Allow all fields allows all fields + custom fields', () => {
 });
 
 test('Allow all fields does not allow filtering field with dot in the name', () => {
-  expect(() => filterParser.generateQueryFindOptions({
-    filter: [{ field: 'user.some.password', type: FilterOperationType.Eq, value: 'value' }],
-  })).toThrow(`user.some.password is not filterable`);
+  expect(() =>
+    filterParser.generateQueryFindOptions({
+      filter: [{ field: 'user.some.password', type: FilterOperationType.Eq, value: 'value' }],
+    }),
+  ).toThrow(`user.some.password is not filterable`);
 });
 
 test('Allow all fields does not allow sorting field with dot in the name', () => {
-  expect(() => filterParser.generateQueryFindOptions({
-    order: [{ field: 'user.some.password', dir: 'asc' }],
-  })).toThrow(`user.some.password is not sortable`);
+  expect(() =>
+    filterParser.generateQueryFindOptions({
+      order: [{ field: 'user.some.password', dir: 'asc' }],
+    }),
+  ).toThrow(`user.some.password is not sortable`);
 });

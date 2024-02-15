@@ -11,7 +11,10 @@ test('Order asc', () => {
 
 test('Order multiple fields', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    order: [{ field: 'test', dir: 'asc' }, { field: 'test2', dir: 'desc' }],
+    order: [
+      { field: 'test', dir: 'asc' },
+      { field: 'test2', dir: 'desc' },
+    ],
   });
   expect(findOptions.orderBy[0]).toEqual({ test: 'asc' });
   expect(findOptions.orderBy[1]).toEqual({ test2: 'desc' });
