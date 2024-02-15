@@ -143,7 +143,6 @@ test('IEndsWith', () => {
   expect(findOptions.where.test).toEqual({ endsWith: '5', mode: 'insensitive' });
 });
 
-
 test('Search', () => {
   const findOptions = filterParser.generateQueryFindOptions({
     filter: [{ field: 'test', type: FilterOperationType.Search, value: '5' }],

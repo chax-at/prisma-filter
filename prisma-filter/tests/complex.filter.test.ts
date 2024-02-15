@@ -1,7 +1,10 @@
 import { FilterOperationType } from '@chax-at/prisma-filter-common';
 import { FilterParser } from '../src/filter.parser';
 
-const filterParser = new FilterParser<any, any>({ 'user.some.email': 'user.some.email', 'order.someValue': 'order.someValue' });
+const filterParser = new FilterParser<any, any>({
+  'user.some.email': 'user.some.email',
+  'order.someValue': 'order.someValue',
+});
 
 test('Complex eq', () => {
   const findOptions = filterParser.generateQueryFindOptions({
@@ -16,7 +19,6 @@ test('Complex order', () => {
   });
   expect(findOptions.orderBy[0]).toEqual({ order: { someValue: 'desc' } });
 });
-
 
 test('Complex order', () => {
   const findOptions = filterParser.generateQueryFindOptions({
