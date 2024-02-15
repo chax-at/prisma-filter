@@ -193,10 +193,10 @@ test('ArrayContains', () => {
     array_contains: ['val1', 'val2', 'val3'],
   });
 
-  findOptions = generateArrayContainsQuery([1, 2, 3]);
+  findOptions = generateArrayContainsQuery(['1', '2', '3']);
   expect(findOptions.where.test).toEqual({ array_contains: [1, 2, 3] });
 
-  findOptions = generateArrayContainsQuery([true, false, true]);
+  findOptions = generateArrayContainsQuery(['true', 'false', 'true']);
   expect(findOptions.where.test).toEqual({
     array_contains: [true, false, true],
   });
@@ -212,17 +212,17 @@ test('ArrayContains', () => {
     array_contains: ['val1'],
   });
 
-  findOptions = generateArrayContainsQuery(123);
+  findOptions = generateArrayContainsQuery('123');
   expect(findOptions.where.test).toEqual({
     array_contains: [123],
   });
 
-  findOptions = generateArrayContainsQuery(true);
+  findOptions = generateArrayContainsQuery('true');
   expect(findOptions.where.test).toEqual({
     array_contains: [true],
   });
 
-  findOptions = generateArrayContainsQuery(false);
+  findOptions = generateArrayContainsQuery('false');
   expect(findOptions.where.test).toEqual({
     array_contains: [false],
   });
@@ -242,13 +242,13 @@ test('ArrayStartsWith', () => {
   let findOptions = generateArrayStartsWithQuery('val1');
   expect(findOptions.where.test).toEqual({ array_starts_with: 'val1' });
 
-  findOptions = generateArrayStartsWithQuery(123);
+  findOptions = generateArrayStartsWithQuery('123');
   expect(findOptions.where.test).toEqual({ array_starts_with: 123 });
 
-  findOptions = generateArrayStartsWithQuery(true);
+  findOptions = generateArrayStartsWithQuery('true');
   expect(findOptions.where.test).toEqual({ array_starts_with: true });
 
-  findOptions = generateArrayStartsWithQuery(false);
+  findOptions = generateArrayStartsWithQuery('false');
   expect(findOptions.where.test).toEqual({ array_starts_with: false });
 });
 
@@ -266,12 +266,12 @@ test('ArrayEndsWith', () => {
   let findOptions = generateArrayEndsWithQuery('val1');
   expect(findOptions.where.test).toEqual({ array_ends_with: 'val1' });
 
-  findOptions = generateArrayEndsWithQuery(123);
+  findOptions = generateArrayEndsWithQuery('123');
   expect(findOptions.where.test).toEqual({ array_ends_with: 123 });
 
-  findOptions = generateArrayEndsWithQuery(true);
+  findOptions = generateArrayEndsWithQuery('true');
   expect(findOptions.where.test).toEqual({ array_ends_with: true });
 
-  findOptions = generateArrayEndsWithQuery(false);
+  findOptions = generateArrayEndsWithQuery('false');
   expect(findOptions.where.test).toEqual({ array_ends_with: false });
 });

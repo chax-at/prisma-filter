@@ -95,10 +95,39 @@ export class FilterParser<TDto, TWhereInput> {
     };
   }
 
+  /**
+   * Helper method that accepts string value and parses it to either number, boolean or string.
+   * e.g. '123' parses to 123, 'true' parses to true and 'val' parses to 'val'.
+   *
+   * @param {string} value - String representation of value from query
+   * @returns {number | boolean | string}
+   */
+  private parseRawStringValue(value: string): number | boolean | string {
+    //parse numbers
+    if (!isNaN(+value)) return +value;
+
+    switch (value) {
+      case 'true':
+        return true;
+      case 'false':
+        return false;
+      default:
+        return value;
+    }
+  }
+
   private getFormattedQueryValueForType(
     rawValue: any,
     type: FilterOperationType,
-  ): string | number | boolean | string[] | number[] | boolean[] | null {
+  ):
+    | string
+    | number
+    | boolean
+    | string[]
+    | number[]
+    | boolean[]
+    | (string | number | boolean)[]
+    | null {
     if (Array.isArray(rawValue)) {
       if (
         rawValue.some(
@@ -108,18 +137,17 @@ export class FilterParser<TDto, TWhereInput> {
       ) {
         throw new Error(`Array filter value must be an Array<string|number|boolean>`);
       }
-      if (
-        type === FilterOperationType.InStrings ||
-        type === FilterOperationType.NotInStrings ||
-        type === FilterOperationType.ArrayContains
-      )
+      if (type === FilterOperationType.InStrings || type === FilterOperationType.NotInStrings)
         return rawValue;
       if (
         type !== FilterOperationType.In &&
-        type !== FilterOperationType.NotIn //&&
-        // type !== FilterOperationType.ArrayContains
+        type !== FilterOperationType.NotIn &&
+        type !== FilterOperationType.ArrayContains
       ) {
         throw new Error(`Filter type ${type} does not support array values`);
+      }
+      if (type === FilterOperationType.ArrayContains) {
+        return rawValue.map(this.parseRawStringValue);
       }
       return rawValue.map((v) => (!isNaN(+v) ? +v : v));
     }
@@ -133,7 +161,7 @@ export class FilterParser<TDto, TWhereInput> {
     }
 
     if (type === FilterOperationType.ArrayContains) {
-      return [rawValue] as string[] | number[] | boolean[];
+      return [this.parseRawStringValue(rawValue.toString())];
     }
 
     if (type === FilterOperationType.EqNull || type === FilterOperationType.NeNull) {
@@ -162,12 +190,14 @@ export class FilterParser<TDto, TWhereInput> {
         FilterOperationType.IEndsWith,
         FilterOperationType.Search,
         FilterOperationType.ISearch,
-        FilterOperationType.ArrayStartsWith,
-        FilterOperationType.ArrayEndsWith,
       ].includes(type)
     ) {
       // Never cast this value for a like filter because this only applies to strings
       return rawValue;
+    }
+
+    if ([FilterOperationType.ArrayStartsWith, FilterOperationType.ArrayEndsWith].includes(type)) {
+      return this.parseRawStringValue(rawValue.toString());
     }
 
     return !isNaN(+rawValue) ? +rawValue : rawValue;
