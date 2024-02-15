@@ -8,7 +8,6 @@ export type GeneratedFindOptions<TWhereInput> = {
   orderBy: Array<{ [p in keyof TWhereInput]?: FilterOrder | any }>;
 };
 
-
 export interface IGeneratedFilter<TWhereInput> extends IFilter {
   findOptions: GeneratedFindOptions<TWhereInput>;
 }

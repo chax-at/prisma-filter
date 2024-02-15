@@ -1,4 +1,10 @@
-import { FilterOperationType, FilterOrder, IFilter, ISingleFilter, ISingleOrder } from '@chax-at/prisma-filter-common';
+import {
+  FilterOperationType,
+  FilterOrder,
+  IFilter,
+  ISingleFilter,
+  ISingleOrder,
+} from '@chax-at/prisma-filter-common';
 import { GeneratedFindOptions } from './filter.interface';
 import { IntFilter, StringFilter } from './prisma.type';
 
@@ -11,13 +17,13 @@ export class FilterParser<TDto, TWhereInput> {
   constructor(
     private readonly mapping: { [p in keyof TDto]?: keyof TWhereInput & string },
     private readonly allowAllFields = false,
-  ) { }
+  ) {}
 
   public generateQueryFindOptions(filterDto: IFilter<TDto>): GeneratedFindOptions<TWhereInput> {
-    if(filterDto.filter == null) {
+    if (filterDto.filter == null) {
       filterDto.filter = [];
     }
-    if(filterDto.order == null) {
+    if (filterDto.order == null) {
       filterDto.order = [];
     }
 
@@ -33,25 +39,25 @@ export class FilterParser<TDto, TWhereInput> {
 
   private generateWhere(filter: Array<ISingleFilter<TDto>>): { [p in keyof TWhereInput]?: any } {
     const where: { [p in keyof TWhereInput]?: any } = Object.create(null);
-    for(const filterEntry of filter) {
+    for (const filterEntry of filter) {
       const fieldName = filterEntry.field;
       let dbFieldName = this.mapping[filterEntry.field];
 
-      if(dbFieldName == null) {
-        if(this.allowAllFields && !fieldName.includes('.')) {
-          dbFieldName = fieldName as unknown as (keyof TWhereInput & string);
+      if (dbFieldName == null) {
+        if (this.allowAllFields && !fieldName.includes('.')) {
+          dbFieldName = fieldName as unknown as keyof TWhereInput & string;
         } else {
           throw new Error(`${fieldName} is not filterable`);
         }
       }
-      if(dbFieldName.length > 0 && dbFieldName[0] === '!') {
+      if (dbFieldName.length > 0 && dbFieldName[0] === '!') {
         continue;
       }
       const dbFieldNameParts = dbFieldName.split('.');
       let currentWhere: any = where;
 
-      for(const dbFieldPart of dbFieldNameParts) {
-        if(currentWhere[dbFieldPart] == null) {
+      for (const dbFieldPart of dbFieldNameParts) {
+        if (currentWhere[dbFieldPart] == null) {
           currentWhere[dbFieldPart] = Object.create(null);
         }
         currentWhere = currentWhere[dbFieldPart];
@@ -61,12 +67,19 @@ export class FilterParser<TDto, TWhereInput> {
     return where;
   }
 
-  private generateWhereValue(type: FilterOperationType, value: any): { [p in keyof IntFilter | keyof StringFilter]?: any } {
+  private generateWhereValue(
+    type: FilterOperationType,
+    value: any,
+  ): { [p in keyof IntFilter | keyof StringFilter]?: any } {
     const queryValue = this.getFormattedQueryValueForType(value, type);
-    if(
-      [FilterOperationType.Ilike, FilterOperationType.IContains,
-       FilterOperationType.ISearch, FilterOperationType.IStartsWith,
-       FilterOperationType.IEndsWith].includes(type)
+    if (
+      [
+        FilterOperationType.Ilike,
+        FilterOperationType.IContains,
+        FilterOperationType.ISearch,
+        FilterOperationType.IStartsWith,
+        FilterOperationType.IEndsWith,
+      ].includes(type)
     ) {
       return {
         [this.getOpByType(type)]: queryValue,
@@ -78,37 +91,63 @@ export class FilterParser<TDto, TWhereInput> {
     };
   }
 
-  private getFormattedQueryValueForType(rawValue: any, type: FilterOperationType): string | number | string[] | number[] | boolean | null {
-    if(Array.isArray(rawValue)) {
-      if(rawValue.some(value => typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean')) {
+  private getFormattedQueryValueForType(
+    rawValue: any,
+    type: FilterOperationType,
+  ): string | number | string[] | number[] | boolean | null {
+    if (Array.isArray(rawValue)) {
+      if (
+        rawValue.some(
+          (value) =>
+            typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean',
+        )
+      ) {
         throw new Error(`Array filter value must be an Array<string|number|boolean>`);
       }
-      if(type === FilterOperationType.InStrings || type === FilterOperationType.NotInStrings) return rawValue;
-      if(type !== FilterOperationType.In && type !== FilterOperationType.NotIn) {
+      if (type === FilterOperationType.InStrings || type === FilterOperationType.NotInStrings)
+        return rawValue;
+      if (type !== FilterOperationType.In && type !== FilterOperationType.NotIn) {
         throw new Error(`Filter type ${type} does not support array values`);
       }
-      return rawValue.map(v => !isNaN(+v) ? +v : v);
+      return rawValue.map((v) => (!isNaN(+v) ? +v : v));
     }
 
-    if(typeof rawValue !== 'string' && typeof rawValue !== 'number' && typeof rawValue !== 'boolean') {
+    if (
+      typeof rawValue !== 'string' &&
+      typeof rawValue !== 'number' &&
+      typeof rawValue !== 'boolean'
+    ) {
       throw new Error(`Filter value must be a string, a number or a boolean`);
     }
 
-    if(type === FilterOperationType.EqNull || type === FilterOperationType.NeNull) {
+    if (type === FilterOperationType.EqNull || type === FilterOperationType.NeNull) {
       // When the operator is of type equal/not equal null: ignore the filter value and set it to null. Otherwise, the value will be taken as a string ('null')
       return null;
     }
 
-    if(type === FilterOperationType.Eq || type === FilterOperationType.Ne) {
+    if (type === FilterOperationType.Eq || type === FilterOperationType.Ne) {
       // If we filter for equality and the value looks like a boolean, then cast it into a boolean
-      if(rawValue === 'true') {
+      if (rawValue === 'true') {
         return true;
-      } else if(rawValue === 'false') return false;
+      } else if (rawValue === 'false') return false;
     }
 
-    if([FilterOperationType.Like, FilterOperationType.Ilike, FilterOperationType.Contains, FilterOperationType.IContains,
-    FilterOperationType.EqString, FilterOperationType.NeString, FilterOperationType.StartsWith, FilterOperationType.IStartsWith,
-    FilterOperationType.EndsWith, FilterOperationType.IEndsWith, FilterOperationType.Search, FilterOperationType.ISearch].includes(type)) {
+    if (
+      [
+        FilterOperationType.Like,
+        FilterOperationType.Ilike,
+        FilterOperationType.Contains,
+        FilterOperationType.IContains,
+        FilterOperationType.EqString,
+        FilterOperationType.NeString,
+        FilterOperationType.StartsWith,
+        FilterOperationType.IStartsWith,
+        FilterOperationType.EndsWith,
+        FilterOperationType.IEndsWith,
+        FilterOperationType.Search,
+        FilterOperationType.ISearch,
+      ].includes(type)
+    ) {
       // Never cast this value for a like filter because this only applies to strings
       return rawValue;
     }
@@ -117,7 +156,7 @@ export class FilterParser<TDto, TWhereInput> {
   }
 
   private getOpByType(type: FilterOperationType): keyof IntFilter | keyof StringFilter {
-    switch(type) {
+    switch (type) {
       case FilterOperationType.Eq:
       case FilterOperationType.EqNull:
       case FilterOperationType.EqString:
@@ -159,21 +198,23 @@ export class FilterParser<TDto, TWhereInput> {
     }
   }
 
-  private generateOrder(order: Array<ISingleOrder<TDto>>): Array<{ [p in keyof TWhereInput]?: FilterOrder }> {
+  private generateOrder(
+    order: Array<ISingleOrder<TDto>>,
+  ): Array<{ [p in keyof TWhereInput]?: FilterOrder }> {
     const generatedOrder = [];
-    for(const orderEntry of order) {
+    for (const orderEntry of order) {
       const fieldName = orderEntry.field;
       let dbFieldName = this.mapping[fieldName];
 
-      if(dbFieldName == null) {
-        if(this.allowAllFields && !fieldName.includes('.')) {
-          dbFieldName = fieldName as unknown as (keyof TWhereInput & string);
+      if (dbFieldName == null) {
+        if (this.allowAllFields && !fieldName.includes('.')) {
+          dbFieldName = fieldName as unknown as keyof TWhereInput & string;
         } else {
           throw new Error(`${fieldName} is not sortable`);
         }
       }
 
-      if(dbFieldName.length > 0 && dbFieldName[0] === '!') {
+      if (dbFieldName.length > 0 && dbFieldName[0] === '!') {
         continue;
       }
 
@@ -181,12 +222,12 @@ export class FilterParser<TDto, TWhereInput> {
       const sortObjToAdd = Object.create(null);
       let currentObj: any = sortObjToAdd;
 
-      for(let i = 0; i < dbFieldNameParts.length; i++) {
+      for (let i = 0; i < dbFieldNameParts.length; i++) {
         const dbFieldPart = dbFieldNameParts[i];
-        if(currentObj[dbFieldPart] == null) {
+        if (currentObj[dbFieldPart] == null) {
           currentObj[dbFieldPart] = Object.create(null);
         }
-        if(i < dbFieldNameParts.length - 1) {
+        if (i < dbFieldNameParts.length - 1) {
           currentObj = currentObj[dbFieldPart];
         } else {
           currentObj[dbFieldPart] = orderEntry.dir;

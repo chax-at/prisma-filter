@@ -15,7 +15,9 @@ import { FilterParser } from './filter.parser';
  * See filter.parser.ts for FilterParser implementation details.
  */
 @Injectable()
-export class DirectFilterPipe<TDto, TWhereInput> implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>> {
+export class DirectFilterPipe<TDto, TWhereInput>
+  implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>>
+{
   private readonly filterParser: FilterParser<TDto, TWhereInput>;
 
   /**
@@ -29,10 +31,10 @@ export class DirectFilterPipe<TDto, TWhereInput> implements PipeTransform<IFilte
    */
   constructor(keys: Array<keyof TDto & keyof TWhereInput & string>, compoundKeys: string[] = []) {
     const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = Object.create(null);
-    for(const key of keys) {
+    for (const key of keys) {
       mapping[key] = key;
     }
-    for(const untypedKey of compoundKeys) {
+    for (const untypedKey of compoundKeys) {
       (mapping as any)[untypedKey] = untypedKey;
     }
     this.filterParser = new FilterParser<TDto, TWhereInput>(mapping);
