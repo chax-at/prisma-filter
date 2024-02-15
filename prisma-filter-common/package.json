@@ -7,12 +7,14 @@
   "repository": "github:chax-at/prisma-filter",
   "scripts": {
     "prepare": "npm run build",
-    "build": "tsc"
+    "build": "tsc",
+    "prettier:write": "prettier \"{src, test}/**/*.ts\" --write"
   },
   "author": "chax.at - Challenge Accepted",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "prettier": "3.0.3"
   },
   "files": [
     "/lib"

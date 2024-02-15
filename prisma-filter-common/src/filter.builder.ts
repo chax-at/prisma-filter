@@ -12,31 +12,36 @@ export class FilterBuilder<T = any> {
   public static buildFilterQueryString(filter: IFilter): string {
     const parts: string[] = [];
 
-    if(filter.offset != null) {
+    if (filter.offset != null) {
       parts.push(`offset=${filter.offset}`);
     }
-    if(filter.limit != null) {
+    if (filter.limit != null) {
       parts.push(`limit=${filter.limit}`);
     }
-    const filterQuery = filter.filter ? FilterBuilder.buildQueryString('filter', filter.filter) : null;
-    if(filterQuery != null) {
+    const filterQuery = filter.filter
+      ? FilterBuilder.buildQueryString('filter', filter.filter)
+      : null;
+    if (filterQuery != null) {
       parts.push(filterQuery);
     }
     const orderQuery = filter.order ? FilterBuilder.buildQueryString('order', filter.order) : null;
-    if(orderQuery != null) {
+    if (orderQuery != null) {
       parts.push(orderQuery);
     }
 
-    if(parts.length === 0) return '';
+    if (parts.length === 0) return '';
 
     return `?${parts.join('&')}`;
   }
 
-  private static buildQueryString(paramName: string, array: Array<ISingleFilter | ISingleOrder>): string | null {
+  private static buildQueryString(
+    paramName: string,
+    array: Array<ISingleFilter | ISingleOrder>,
+  ): string | null {
     const parts: Array<string> = [];
-    for(let i = 0; i < array.length; i++) {
-      for(const [key, value] of Object.entries(array[i])) {
-        if(!['field', 'dir', 'type', 'value'].includes(key)) {
+    for (let i = 0; i < array.length; i++) {
+      for (const [key, value] of Object.entries(array[i])) {
+        if (!['field', 'dir', 'type', 'value'].includes(key)) {
           continue;
         }
         /**
@@ -45,21 +50,27 @@ export class FilterBuilder<T = any> {
          * filter[x][field]=<fieldName>
          * & filter[x][type]=in
          */
-        if(Array.isArray(value)) {
-          if(value.length === 0) {
+        if (Array.isArray(value)) {
+          if (value.length === 0) {
             parts.push(`${encodeURIComponent(paramName)}[${i}][${encodeURIComponent(key)}]=`);
           }
-          for(let y = 0; y < value.length; y++) {
+          for (let y = 0; y < value.length; y++) {
             /**
              * & filter[x][value][]=<value>
              */
             const valueY = value[y];
             parts.push(
-              `${encodeURIComponent(paramName)}[${i}][${encodeURIComponent(key)}][]=${encodeURIComponent(valueY != null ? valueY.toString() : '')}`,
+              `${encodeURIComponent(paramName)}[${i}][${encodeURIComponent(
+                key,
+              )}][]=${encodeURIComponent(valueY != null ? valueY.toString() : '')}`,
             );
           }
         } else {
-          parts.push(`${encodeURIComponent(paramName)}[${i}][${encodeURIComponent(key)}]=${encodeURIComponent(value != null ? value.toString() : '')}`);
+          parts.push(
+            `${encodeURIComponent(paramName)}[${i}][${encodeURIComponent(
+              key,
+            )}]=${encodeURIComponent(value != null ? value.toString() : '')}`,
+          );
         }
       }
     }
@@ -80,7 +91,7 @@ export class FilterBuilder<T = any> {
    * @returns FilterBuilder for chaining
    */
   public addFilter(field: keyof T & string, type: FilterOperationType, value: any): this {
-    if(this.filter.filter == null) {
+    if (this.filter.filter == null) {
       this.filter.filter = [];
     }
     this.filter.filter.push({ field, type, value });
@@ -136,10 +147,10 @@ export class FilterBuilder<T = any> {
    * @returns FilterBuilder for chaining
    */
   public requestPage(page: number): this {
-    if(this.filter.limit == null) {
+    if (this.filter.limit == null) {
       throw new Error('requestPage can only be called after calling setPageSize');
     }
-    if(page <= 0) {
+    if (page <= 0) {
       throw new Error('Invalid argument: page must be at least 1');
     }
     this.filter.offset = this.filter.limit * (page - 1);
@@ -159,7 +170,7 @@ export class FilterBuilder<T = any> {
    * @returns FilterBuilder for chaining
    */
   public addOrderBy(field: keyof T & string, dir: FilterOrder): this {
-    if(this.filter.order == null) {
+    if (this.filter.order == null) {
       this.filter.order = [];
     }
     this.filter.order.push({ field, dir });

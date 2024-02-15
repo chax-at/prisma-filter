@@ -23,7 +23,9 @@ import { FilterParser } from './filter.parser';
  * See filter/filter.parser.ts for FilterParser implementation details.
  */
 @Injectable()
-export class FilterPipe<TDto, TWhereInput> implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>> {
+export class FilterPipe<TDto, TWhereInput>
+  implements PipeTransform<IFilter<TDto>, IGeneratedFilter<TWhereInput>>
+{
   private readonly filterParser: FilterParser<TDto, TWhereInput>;
 
   constructor(mapping: { [p in keyof TDto]?: keyof TWhereInput & string }) {

@@ -4,9 +4,9 @@ import {
   IFilter,
   ISingleFilter,
   ISingleOrder,
-} from "@chax-at/prisma-filter-common";
-import { GeneratedFindOptions } from "./filter.interface";
-import { ArrayFilter, IntFilter, StringFilter } from "./prisma.type";
+} from '@chax-at/prisma-filter-common';
+import { GeneratedFindOptions } from './filter.interface';
+import { ArrayFilter, IntFilter, StringFilter } from './prisma.type';
 
 export class FilterParser<TDto, TWhereInput> {
   /**
@@ -18,12 +18,10 @@ export class FilterParser<TDto, TWhereInput> {
     private readonly mapping: {
       [p in keyof TDto]?: keyof TWhereInput & string;
     },
-    private readonly allowAllFields = false
+    private readonly allowAllFields = false,
   ) {}
 
-  public generateQueryFindOptions(
-    filterDto: IFilter<TDto>
-  ): GeneratedFindOptions<TWhereInput> {
+  public generateQueryFindOptions(filterDto: IFilter<TDto>): GeneratedFindOptions<TWhereInput> {
     if (filterDto.filter == null) {
       filterDto.filter = [];
     }
@@ -50,16 +48,16 @@ export class FilterParser<TDto, TWhereInput> {
       let dbFieldName = this.mapping[filterEntry.field];
 
       if (dbFieldName == null) {
-        if (this.allowAllFields && !fieldName.includes(".")) {
+        if (this.allowAllFields && !fieldName.includes('.')) {
           dbFieldName = fieldName as unknown as keyof TWhereInput & string;
         } else {
           throw new Error(`${fieldName} is not filterable`);
         }
       }
-      if (dbFieldName.length > 0 && dbFieldName[0] === "!") {
+      if (dbFieldName.length > 0 && dbFieldName[0] === '!') {
         continue;
       }
-      const dbFieldNameParts = dbFieldName.split(".");
+      const dbFieldNameParts = dbFieldName.split('.');
       let currentWhere: any = where;
 
       for (const dbFieldPart of dbFieldNameParts) {
@@ -68,17 +66,14 @@ export class FilterParser<TDto, TWhereInput> {
         }
         currentWhere = currentWhere[dbFieldPart];
       }
-      Object.assign(
-        currentWhere,
-        this.generateWhereValue(filterEntry.type, filterEntry.value)
-      );
+      Object.assign(currentWhere, this.generateWhereValue(filterEntry.type, filterEntry.value));
     }
     return where;
   }
 
   private generateWhereValue(
     type: FilterOperationType,
-    value: any
+    value: any,
   ): { [p in keyof IntFilter | keyof StringFilter]?: any } {
     const queryValue = this.getFormattedQueryValueForType(value, type);
     if (
@@ -92,7 +87,7 @@ export class FilterParser<TDto, TWhereInput> {
     ) {
       return {
         [this.getOpByType(type)]: queryValue,
-        mode: "insensitive",
+        mode: 'insensitive',
       };
     }
     return {
@@ -102,20 +97,16 @@ export class FilterParser<TDto, TWhereInput> {
 
   private getFormattedQueryValueForType(
     rawValue: any,
-    type: FilterOperationType
+    type: FilterOperationType,
   ): string | number | boolean | string[] | number[] | boolean[] | null {
     if (Array.isArray(rawValue)) {
       if (
         rawValue.some(
           (value) =>
-            typeof value !== "string" &&
-            typeof value !== "number" &&
-            typeof value !== "boolean"
+            typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean',
         )
       ) {
-        throw new Error(
-          `Array filter value must be an Array<string|number|boolean>`
-        );
+        throw new Error(`Array filter value must be an Array<string|number|boolean>`);
       }
       if (
         type === FilterOperationType.InStrings ||
@@ -134,9 +125,9 @@ export class FilterParser<TDto, TWhereInput> {
     }
 
     if (
-      typeof rawValue !== "string" &&
-      typeof rawValue !== "number" &&
-      typeof rawValue !== "boolean"
+      typeof rawValue !== 'string' &&
+      typeof rawValue !== 'number' &&
+      typeof rawValue !== 'boolean'
     ) {
       throw new Error(`Filter value must be a string, a number or a boolean`);
     }
@@ -145,19 +136,16 @@ export class FilterParser<TDto, TWhereInput> {
       return [rawValue] as string[] | number[] | boolean[];
     }
 
-    if (
-      type === FilterOperationType.EqNull ||
-      type === FilterOperationType.NeNull
-    ) {
+    if (type === FilterOperationType.EqNull || type === FilterOperationType.NeNull) {
       // When the operator is of type equal/not equal null: ignore the filter value and set it to null. Otherwise, the value will be taken as a string ('null')
       return null;
     }
 
     if (type === FilterOperationType.Eq || type === FilterOperationType.Ne) {
       // If we filter for equality and the value looks like a boolean, then cast it into a boolean
-      if (rawValue === "true") {
+      if (rawValue === 'true') {
         return true;
-      } else if (rawValue === "false") return false;
+      } else if (rawValue === 'false') return false;
     }
 
     if (
@@ -186,58 +174,58 @@ export class FilterParser<TDto, TWhereInput> {
   }
 
   private getOpByType(
-    type: FilterOperationType
+    type: FilterOperationType,
   ): keyof IntFilter | keyof StringFilter | keyof ArrayFilter {
     switch (type) {
       case FilterOperationType.Eq:
       case FilterOperationType.EqNull:
       case FilterOperationType.EqString:
-        return "equals";
+        return 'equals';
       case FilterOperationType.Lt:
-        return "lt";
+        return 'lt';
       case FilterOperationType.Lte:
-        return "lte";
+        return 'lte';
       case FilterOperationType.Gt:
-        return "gt";
+        return 'gt';
       case FilterOperationType.Gte:
-        return "gte";
+        return 'gte';
       case FilterOperationType.Ne:
       case FilterOperationType.NeNull:
       case FilterOperationType.NeString:
-        return "not";
+        return 'not';
       case FilterOperationType.Like:
       case FilterOperationType.Ilike:
       case FilterOperationType.Contains:
       case FilterOperationType.IContains:
-        return "contains";
+        return 'contains';
       case FilterOperationType.StartsWith:
       case FilterOperationType.IStartsWith:
-        return "startsWith";
+        return 'startsWith';
       case FilterOperationType.EndsWith:
       case FilterOperationType.IEndsWith:
-        return "endsWith";
+        return 'endsWith';
       case FilterOperationType.Search:
       case FilterOperationType.ISearch:
-        return "search" as any; // This is a preview feature
+        return 'search' as any; // This is a preview feature
       case FilterOperationType.In:
       case FilterOperationType.InStrings:
-        return "in";
+        return 'in';
       case FilterOperationType.NotIn:
       case FilterOperationType.NotInStrings:
-        return "notIn";
+        return 'notIn';
       case FilterOperationType.ArrayContains:
-        return "array_contains";
+        return 'array_contains';
       case FilterOperationType.ArrayStartsWith:
-        return "array_starts_with";
+        return 'array_starts_with';
       case FilterOperationType.ArrayEndsWith:
-        return "array_ends_with";
+        return 'array_ends_with';
       default:
         throw new Error(`${type} is not a valid filter type`);
     }
   }
 
   private generateOrder(
-    order: Array<ISingleOrder<TDto>>
+    order: Array<ISingleOrder<TDto>>,
   ): Array<{ [p in keyof TWhereInput]?: FilterOrder }> {
     const generatedOrder = [];
     for (const orderEntry of order) {
@@ -245,18 +233,18 @@ export class FilterParser<TDto, TWhereInput> {
       let dbFieldName = this.mapping[fieldName];
 
       if (dbFieldName == null) {
-        if (this.allowAllFields && !fieldName.includes(".")) {
+        if (this.allowAllFields && !fieldName.includes('.')) {
           dbFieldName = fieldName as unknown as keyof TWhereInput & string;
         } else {
           throw new Error(`${fieldName} is not sortable`);
         }
       }
 
-      if (dbFieldName.length > 0 && dbFieldName[0] === "!") {
+      if (dbFieldName.length > 0 && dbFieldName[0] === '!') {
         continue;
       }
 
-      const dbFieldNameParts = dbFieldName.split(".");
+      const dbFieldNameParts = dbFieldName.split('.');
       const sortObjToAdd = Object.create(null);
       let currentObj: any = sortObjToAdd;
 

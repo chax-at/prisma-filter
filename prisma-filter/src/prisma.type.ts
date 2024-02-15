@@ -25,8 +25,8 @@ export type NestedIntFilter = {
 };
 
 export const QueryMode = {
-  default: "default",
-  insensitive: "insensitive",
+  default: 'default',
+  insensitive: 'insensitive',
 } as const;
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
@@ -61,10 +61,7 @@ export type NestedStringFilter = {
 };
 
 export type ArrayFilter = {
-  array_contains?:
-    | Enumerable<string>
-    | Enumerable<number>
-    | Enumerable<boolean>;
+  array_contains?: Enumerable<string> | Enumerable<number> | Enumerable<boolean>;
   array_starts_with?: string | number | boolean;
   array_ends_with?: string | number | boolean;
 };
