@@ -6,7 +6,7 @@ import {
   ISingleOrder,
 } from '@chax-at/prisma-filter-common';
 import { GeneratedFindOptions } from './filter.interface';
-import { IntFilter, StringFilter } from './prisma.type';
+import { ArrayFilter, IntFilter, StringFilter } from './prisma.type';
 
 export class FilterParser<TDto, TWhereInput> {
   /**
@@ -15,7 +15,9 @@ export class FilterParser<TDto, TWhereInput> {
    * @param allowAllFields - Allow filtering on *all* top-level keys. Warning! Only use this if the user should have access to ALL data of the column
    */
   constructor(
-    private readonly mapping: { [p in keyof TDto]?: keyof TWhereInput & string },
+    private readonly mapping: {
+      [p in keyof TDto]?: keyof TWhereInput & string;
+    },
     private readonly allowAllFields = false,
   ) {}
 
@@ -37,7 +39,9 @@ export class FilterParser<TDto, TWhereInput> {
     };
   }
 
-  private generateWhere(filter: Array<ISingleFilter<TDto>>): { [p in keyof TWhereInput]?: any } {
+  private generateWhere(filter: Array<ISingleFilter<TDto>>): {
+    [p in keyof TWhereInput]?: any;
+  } {
     const where: { [p in keyof TWhereInput]?: any } = Object.create(null);
     for (const filterEntry of filter) {
       const fieldName = filterEntry.field;
@@ -91,10 +95,39 @@ export class FilterParser<TDto, TWhereInput> {
     };
   }
 
+  /**
+   * Helper method that accepts string value and parses it to either number, boolean or string.
+   * e.g. '123' parses to 123, 'true' parses to true and 'val' parses to 'val'.
+   *
+   * @param {string} value - String representation of value from query
+   * @returns {number | boolean | string}
+   */
+  private parseRawStringValue(value: string): number | boolean | string {
+    //parse numbers
+    if (!isNaN(+value)) return +value;
+
+    switch (value) {
+      case 'true':
+        return true;
+      case 'false':
+        return false;
+      default:
+        return value;
+    }
+  }
+
   private getFormattedQueryValueForType(
     rawValue: any,
     type: FilterOperationType,
-  ): string | number | string[] | number[] | boolean | null {
+  ):
+    | string
+    | number
+    | boolean
+    | string[]
+    | number[]
+    | boolean[]
+    | (string | number | boolean)[]
+    | null {
     if (Array.isArray(rawValue)) {
       if (
         rawValue.some(
@@ -106,8 +139,15 @@ export class FilterParser<TDto, TWhereInput> {
       }
       if (type === FilterOperationType.InStrings || type === FilterOperationType.NotInStrings)
         return rawValue;
-      if (type !== FilterOperationType.In && type !== FilterOperationType.NotIn) {
+      if (
+        type !== FilterOperationType.In &&
+        type !== FilterOperationType.NotIn &&
+        type !== FilterOperationType.ArrayContains
+      ) {
         throw new Error(`Filter type ${type} does not support array values`);
+      }
+      if (type === FilterOperationType.ArrayContains) {
+        return rawValue.map(this.parseRawStringValue);
       }
       return rawValue.map((v) => (!isNaN(+v) ? +v : v));
     }
@@ -118,6 +158,10 @@ export class FilterParser<TDto, TWhereInput> {
       typeof rawValue !== 'boolean'
     ) {
       throw new Error(`Filter value must be a string, a number or a boolean`);
+    }
+
+    if (type === FilterOperationType.ArrayContains) {
+      return [this.parseRawStringValue(rawValue.toString())];
     }
 
     if (type === FilterOperationType.EqNull || type === FilterOperationType.NeNull) {
@@ -152,10 +196,16 @@ export class FilterParser<TDto, TWhereInput> {
       return rawValue;
     }
 
+    if ([FilterOperationType.ArrayStartsWith, FilterOperationType.ArrayEndsWith].includes(type)) {
+      return this.parseRawStringValue(rawValue.toString());
+    }
+
     return !isNaN(+rawValue) ? +rawValue : rawValue;
   }
 
-  private getOpByType(type: FilterOperationType): keyof IntFilter | keyof StringFilter {
+  private getOpByType(
+    type: FilterOperationType,
+  ): keyof IntFilter | keyof StringFilter | keyof ArrayFilter {
     switch (type) {
       case FilterOperationType.Eq:
       case FilterOperationType.EqNull:
@@ -193,6 +243,12 @@ export class FilterParser<TDto, TWhereInput> {
       case FilterOperationType.NotIn:
       case FilterOperationType.NotInStrings:
         return 'notIn';
+      case FilterOperationType.ArrayContains:
+        return 'array_contains';
+      case FilterOperationType.ArrayStartsWith:
+        return 'array_starts_with';
+      case FilterOperationType.ArrayEndsWith:
+        return 'array_ends_with';
       default:
         throw new Error(`${type} is not a valid filter type`);
     }

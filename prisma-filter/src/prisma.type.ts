@@ -59,3 +59,9 @@ export type NestedStringFilter = {
   endsWith?: string;
   not?: NestedStringFilter | string;
 };
+
+export type ArrayFilter = {
+  array_contains?: Enumerable<string> | Enumerable<number> | Enumerable<boolean>;
+  array_starts_with?: string | number | boolean;
+  array_ends_with?: string | number | boolean;
+};

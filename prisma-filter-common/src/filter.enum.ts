@@ -33,6 +33,9 @@ export enum FilterOperationType {
   // Null Operations
   EqNull = 'eqnull',
   NeNull = 'nenull',
+  ArrayContains = 'array_contains',
+  ArrayStartsWith = 'array_starts_with',
+  ArrayEndsWith = 'array_ends_with',
 }
 
 export type FilterOrder = 'asc' | 'desc';

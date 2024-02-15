@@ -63,14 +63,20 @@ test('Ilike', () => {
   const findOptions = filterParser.generateQueryFindOptions({
     filter: [{ field: 'test', type: FilterOperationType.IContains, value: '%val%' }],
   });
-  expect(findOptions.where.test).toEqual({ contains: '%val%', mode: 'insensitive' });
+  expect(findOptions.where.test).toEqual({
+    contains: '%val%',
+    mode: 'insensitive',
+  });
 });
 
 test('Ilike for number', () => {
   const findOptions = filterParser.generateQueryFindOptions({
     filter: [{ field: 'test', type: FilterOperationType.IContains, value: '5' }],
   });
-  expect(findOptions.where.test).toEqual({ contains: '5', mode: 'insensitive' });
+  expect(findOptions.where.test).toEqual({
+    contains: '5',
+    mode: 'insensitive',
+  });
 });
 
 test('In', () => {
@@ -82,7 +88,13 @@ test('In', () => {
 
 test('InStrings', () => {
   const findOptions = filterParser.generateQueryFindOptions({
-    filter: [{ field: 'test', type: FilterOperationType.InStrings, value: ['val1', 'val2'] }],
+    filter: [
+      {
+        field: 'test',
+        type: FilterOperationType.InStrings,
+        value: ['val1', 'val2'],
+      },
+    ],
   });
   expect(findOptions.where.test).toEqual({ in: ['val1', 'val2'] });
 });
@@ -126,7 +138,10 @@ test('IStartsWith', () => {
   const findOptions = filterParser.generateQueryFindOptions({
     filter: [{ field: 'test', type: FilterOperationType.IStartsWith, value: '5' }],
   });
-  expect(findOptions.where.test).toEqual({ startsWith: '5', mode: 'insensitive' });
+  expect(findOptions.where.test).toEqual({
+    startsWith: '5',
+    mode: 'insensitive',
+  });
 });
 
 test('EndsWith', () => {
@@ -140,7 +155,10 @@ test('IEndsWith', () => {
   const findOptions = filterParser.generateQueryFindOptions({
     filter: [{ field: 'test', type: FilterOperationType.IEndsWith, value: '5' }],
   });
-  expect(findOptions.where.test).toEqual({ endsWith: '5', mode: 'insensitive' });
+  expect(findOptions.where.test).toEqual({
+    endsWith: '5',
+    mode: 'insensitive',
+  });
 });
 
 test('Search', () => {
@@ -155,4 +173,105 @@ test('ISearch', () => {
     filter: [{ field: 'test', type: FilterOperationType.ISearch, value: '5' }],
   });
   expect(findOptions.where.test).toEqual({ search: '5', mode: 'insensitive' });
+});
+
+test('ArrayContains', () => {
+  const generateArrayContainsQuery = (value) =>
+    filterParser.generateQueryFindOptions({
+      filter: [
+        {
+          field: 'test',
+          type: FilterOperationType.ArrayContains,
+          value,
+        },
+      ],
+    });
+
+  //test array values
+  let findOptions = generateArrayContainsQuery(['val1', 'val2', 'val3']);
+  expect(findOptions.where.test).toEqual({
+    array_contains: ['val1', 'val2', 'val3'],
+  });
+
+  findOptions = generateArrayContainsQuery(['1', '2', '3']);
+  expect(findOptions.where.test).toEqual({ array_contains: [1, 2, 3] });
+
+  findOptions = generateArrayContainsQuery(['true', 'false', 'true']);
+  expect(findOptions.where.test).toEqual({
+    array_contains: [true, false, true],
+  });
+
+  findOptions = generateArrayContainsQuery([]);
+  expect(findOptions.where.test).toEqual({
+    array_contains: [],
+  });
+
+  //test single values
+  findOptions = generateArrayContainsQuery('val1');
+  expect(findOptions.where.test).toEqual({
+    array_contains: ['val1'],
+  });
+
+  findOptions = generateArrayContainsQuery('123');
+  expect(findOptions.where.test).toEqual({
+    array_contains: [123],
+  });
+
+  findOptions = generateArrayContainsQuery('true');
+  expect(findOptions.where.test).toEqual({
+    array_contains: [true],
+  });
+
+  findOptions = generateArrayContainsQuery('false');
+  expect(findOptions.where.test).toEqual({
+    array_contains: [false],
+  });
+});
+
+test('ArrayStartsWith', () => {
+  const generateArrayStartsWithQuery = (value) =>
+    filterParser.generateQueryFindOptions({
+      filter: [
+        {
+          field: 'test',
+          type: FilterOperationType.ArrayStartsWith,
+          value,
+        },
+      ],
+    });
+  let findOptions = generateArrayStartsWithQuery('val1');
+  expect(findOptions.where.test).toEqual({ array_starts_with: 'val1' });
+
+  findOptions = generateArrayStartsWithQuery('123');
+  expect(findOptions.where.test).toEqual({ array_starts_with: 123 });
+
+  findOptions = generateArrayStartsWithQuery('true');
+  expect(findOptions.where.test).toEqual({ array_starts_with: true });
+
+  findOptions = generateArrayStartsWithQuery('false');
+  expect(findOptions.where.test).toEqual({ array_starts_with: false });
+});
+
+test('ArrayEndsWith', () => {
+  const generateArrayEndsWithQuery = (value) =>
+    filterParser.generateQueryFindOptions({
+      filter: [
+        {
+          field: 'test',
+          type: FilterOperationType.ArrayEndsWith,
+          value,
+        },
+      ],
+    });
+  let findOptions = generateArrayEndsWithQuery('val1');
+  expect(findOptions.where.test).toEqual({ array_ends_with: 'val1' });
+
+  findOptions = generateArrayEndsWithQuery('123');
+  expect(findOptions.where.test).toEqual({ array_ends_with: 123 });
+
+  findOptions = generateArrayEndsWithQuery('true');
+  expect(findOptions.where.test).toEqual({ array_ends_with: true });
+
+  findOptions = generateArrayEndsWithQuery('false');
+  expect(findOptions.where.test).toEqual({ array_ends_with: false });
 });

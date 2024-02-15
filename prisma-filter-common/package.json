@@ -8,7 +8,7 @@
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc",
-    "prettier:write": "prettier \"{src, test}/**/*.ts\" --write"
+    "prettier:write": "prettier \"{src,test}/**/*.ts\" --write"
   },
   "author": "chax.at - Challenge Accepted",
   "license": "MIT",
