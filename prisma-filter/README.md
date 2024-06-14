@@ -182,7 +182,7 @@ export class SomeController {
   public async getOrders(
     @Query(new DirectFilterPipe<any, Prisma.OrderWhereInput>(
       ['id', 'status', 'createdAt', 'refundStatus', 'refundedPrice', 'paymentDate', 'totalPrice', 'paymentMethod'],
-      ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName', '!paymentInAdvance'],
+      ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName'],
     )) filterDto: FilterDto<Prisma.OrderWhereInput>,
   ) {
     return this.someService.getOrders(filterDto.findOptions);
@@ -224,6 +224,33 @@ export class SomeService {
   corresponding prisma syntax
   </a>, e.g. `articles.some.title` to filter for orders that contain at least one article with the given title.
   These are not type checked.
+
+#### Default sort order
+Especially when using pagination, you should always define a sort order so that the pagination is stable. You can define a default sort order
+when creating a `DirectFilterPipe` that will always be added unless the same key is already defined.
+```typescript
+export class SomeController {
+  @Get()
+  public async getOrders(
+    @Query(new DirectFilterPipe<any, Prisma.OrderWhereInput>(
+      ['id', 'status', 'createdAt', 'refundStatus', 'refundedPrice', 'paymentDate', 'totalPrice', 'paymentMethod'],
+      ['event.title', 'user.email', 'user.firstname', 'user.lastname', 'contactAddress.firstName', 'contactAddress.lastName'],
+      // Always add sort by `createdAt` ascending. Use the id as 2nd sorting criteria if the createdAt is equal. 
+      [{ createdAt: 'asc' }, { id: 'asc' }],
+    )) filterDto: FilterDto<Prisma.OrderWhereInput>,
+  ) {
+    // ...
+  }
+}
+```
+
+With the code above, the following requests are possible:
+
+| Request order    | Resulting order                              |
+|------------------|----------------------------------------------|
+| no sorting order | createdAt(asc) -> id(asc)                    |
+| totalPrice(asc)  | totalPrice(asc) -> createdAt(asc) -> id(asc) |
+| id(desc)         | id(desc) -> createdAt(asc)                   |
 
 #### Virtual fields
 If you prefix your compoundKey with `!`, then it will be ignored by the filter pipe. You can use this, if you

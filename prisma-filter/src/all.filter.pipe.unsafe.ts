@@ -1,6 +1,6 @@
 import { IFilter } from '@chax-at/prisma-filter-common';
 import { Injectable, PipeTransform } from '@nestjs/common';
-import { IGeneratedFilter } from './filter.interface';
+import { IGeneratedFilter, OrderBy } from './filter.interface';
 import { FilterParser } from './filter.parser';
 
 /**
@@ -29,13 +29,14 @@ export class AllFilterPipeUnsafe<TDto, TWhereInput>
    * @example new AllFilterPipeUnsafe<any, Prisma.OrderInput>(['user.name', 'articles.some.name'])
    *
    * @param compoundKeys - Keys in the form of 'user.firstname' (-to-one relation) or 'articles.some.name' (-to-many relation) which will be mapped to relations. Keys starting with ! are ignored.
+   * @param defaultOrderBy - The default orderBy is always appended unless the order keys are already defined in the request
    */
-  constructor(compoundKeys: string[] = []) {
+  constructor(compoundKeys: string[] = [], defaultOrderBy: OrderBy<TWhereInput> = []) {
     const mapping: { [p in keyof TDto]?: keyof TWhereInput & string } = Object.create(null);
     for (const untypedKey of compoundKeys) {
       (mapping as any)[untypedKey] = untypedKey;
     }
-    this.filterParser = new FilterParser<TDto, TWhereInput>(mapping, true);
+    this.filterParser = new FilterParser<TDto, TWhereInput>(mapping, true, defaultOrderBy);
   }
 
   public transform(value: IFilter<TDto>): IGeneratedFilter<TWhereInput> {

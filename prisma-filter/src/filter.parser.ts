@@ -5,7 +5,7 @@ import {
   ISingleFilter,
   ISingleOrder,
 } from '@chax-at/prisma-filter-common';
-import { GeneratedFindOptions } from './filter.interface';
+import { GeneratedFindOptions, OrderBy } from './filter.interface';
 import { ArrayFilter, IntFilter, StringFilter } from './prisma.type';
 
 export class FilterParser<TDto, TWhereInput> {
@@ -13,12 +13,14 @@ export class FilterParser<TDto, TWhereInput> {
    *
    * @param mapping - An object mapping from Dto key to database key
    * @param allowAllFields - Allow filtering on *all* top-level keys. Warning! Only use this if the user should have access to ALL data of the column
+   * @param defaultOrderBy - The default orderBy is always appended unless the order keys are already defined in the request
    */
   constructor(
     private readonly mapping: {
       [p in keyof TDto]?: keyof TWhereInput & string;
     },
     private readonly allowAllFields = false,
+    private readonly defaultOrderBy: OrderBy<TWhereInput> = [],
   ) {}
 
   public generateQueryFindOptions(filterDto: IFilter<TDto>): GeneratedFindOptions<TWhereInput> {
@@ -31,6 +33,17 @@ export class FilterParser<TDto, TWhereInput> {
 
     const where = this.generateWhere(filterDto.filter);
     const generatedOrder = this.generateOrder(filterDto.order);
+
+    if (this.defaultOrderBy.length > 0) {
+      const existingOrderFields = new Set(generatedOrder.flatMap((o) => Object.keys(o)));
+      // Add default orderBy only if the key does not exist already
+      for (const orderByRow of this.defaultOrderBy) {
+        const keys = Object.keys(orderByRow);
+        if (keys.some((k) => existingOrderFields.has(k))) continue;
+        // Return a clone so that changes from the application won't change our default here
+        generatedOrder.push(structuredClone(orderByRow));
+      }
+    }
     return {
       where: where as TWhereInput,
       skip: filterDto.offset,
