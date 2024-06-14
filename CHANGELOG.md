@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added a new parameter to `DirectFilterPipe`, `AllFilterPipeUnsafe` and `FilterParser`, allowing you to define a default sort order that is always appended unless the keys are set by the request.
 
+### Changed
+- Minimum required node version increased to 18 (which should not be breaking because node 16 is EOL since 2023-09-11)
+
 ## [4.0.0] - 2024-02-21
 ### :warning: Breaking Changes
 Added new filter operations. Make sure that both the common-package and the prisma-filter-package in your Frontend and Backend are on version 4.
