@@ -7,9 +7,9 @@ export type OrderBy<TWhereInput> = Array<{
 
 export type GeneratedFindOptions<TWhereInput> = {
   where: TWhereInput;
-  skip: number | undefined;
-  take: number | undefined;
-  orderBy: OrderBy<TWhereInput>;
+  skip?: number;
+  take?: number;
+  orderBy?: OrderBy<TWhereInput>;
 };
 
 export interface IGeneratedFilter<TWhereInput> extends IFilter {
