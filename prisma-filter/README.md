@@ -5,7 +5,7 @@ The query parameters use the same structure as <a href="http://tabulator.info/do
 
 ## ⚠️ WARNING for NestJS 11+
 
-With NestJS 11+, you have to enable the extended query parser, otherwise the filter parser won't work (see [upgrade guide](https://docs.nestjs.com/migration-guide#express-v5)):
+With NestJS 11+, you have to enable the extended query parser, otherwise the filter parser won't work (see [migration guide](https://docs.nestjs.com/migration-guide#query-parameters-parsing)):
 
 ```ts
 async function bootstrap() {
