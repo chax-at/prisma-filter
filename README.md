@@ -8,7 +8,11 @@ The query parameters use the same structure as <a href="http://tabulator.info/do
 With NestJS 11+, you have to enable the extended query parser, otherwise the filter parser won't work (see [upgrade guide](https://docs.nestjs.com/migration-guide#express-v5)):
 
 ```ts
-app.set('query parser', 'extended'); // <-- Add this line
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule); // <-- Make sure to use <NestExpressApplication>
+  app.set('query parser', 'extended'); // <-- Add this line
+  await app.listen(3000);
+}
 ```
 
 ## Usage - Frontend
