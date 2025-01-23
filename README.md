@@ -3,6 +3,14 @@ This package provides a <a href="https://github.com/nestjs/nest">NestJS</a> tran
 REST query parameters into `findOption`s for <a href="https://github.com/prisma/prisma">Prisma</a>.
 The query parameters use the same structure as <a href="http://tabulator.info/docs/5.1/filter#ajax-filter">Tabulator</a>.
 
+## ⚠️ WARNING for NestJS 11+
+
+With NestJS 11+, you have to enable the extended query parser, otherwise the filter parser won't work (see [upgrade guide](https://docs.nestjs.com/migration-guide#express-v5)):
+
+```ts
+app.set('query parser', 'extended'); // <-- Add this line
+```
+
 ## Usage - Frontend
 First, install all needed types by running
 ```
