@@ -36,6 +36,12 @@ export enum FilterOperationType {
   ArrayContains = 'array_contains',
   ArrayStartsWith = 'array_starts_with',
   ArrayEndsWith = 'array_ends_with',
+  Has = 'has',
+  HasString = 'has_string',
+  HasSome = 'has_some',
+  HasSomeString = 'has_some_string',
+  HasEvery = 'has_every',
+  HasEveryString = 'has_every_string',
 }
 
 export type FilterOrder = 'asc' | 'desc';
