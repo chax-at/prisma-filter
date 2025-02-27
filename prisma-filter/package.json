@@ -1,6 +1,6 @@
 {
   "name": "@chax-at/prisma-filter",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "The PrismaFilter package allows the frontend to request filtered, sorted, and paginated data via query parameters. The package automatically generates Prisma findOptions from these query parameters, which can then be directly used in the backend.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -26,7 +26,7 @@
     "prettier": "3.3.2"
   },
   "peerDependencies": {
-    "@nestjs/common": "6 - 10"
+    "@nestjs/common": "6 - 11"
   },
   "engines": {
     "node": ">= 18"
