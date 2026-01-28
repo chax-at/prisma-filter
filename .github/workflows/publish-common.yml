@@ -1,7 +1,7 @@
-name: Publish Package to npmjs
+name: Publish common Package to npmjs
 on:
-  workflow_dispatch:
-
+  release:
+    types: [published]
 jobs:
   build:
     environment: npm
@@ -18,9 +18,8 @@ jobs:
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm
         run: npm install -g npm@latest
-
-      # Publish prisma-filter package
+      # Publish common package
       - run: npm ci
-        working-directory: ./prisma-filter
+        working-directory: ./prisma-filter-common
       - run: npm publish --access public
-        working-directory: ./prisma-filter
+        working-directory: ./prisma-filter-common
