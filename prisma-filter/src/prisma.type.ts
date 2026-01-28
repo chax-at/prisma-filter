@@ -44,6 +44,9 @@ export type StringFilter = {
   endsWith?: string;
   mode?: QueryMode;
   not?: NestedStringFilter | string;
+  has?: string;
+  hasEvery?: string[];
+  hasSome?: string[];
 };
 
 export type NestedStringFilter = {

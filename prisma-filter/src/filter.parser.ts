@@ -150,15 +150,25 @@ export class FilterParser<TDto, TWhereInput> {
       ) {
         throw new Error(`Array filter value must be an Array<string|number|boolean>`);
       }
-      if (type === FilterOperationType.InStrings || type === FilterOperationType.NotInStrings)
+      if (
+        type === FilterOperationType.InStrings ||
+        type === FilterOperationType.NotInStrings ||
+        type === FilterOperationType.HasString ||
+        type === FilterOperationType.HasEveryString
+      ) {
         return rawValue;
+      }
+
       if (
         type !== FilterOperationType.In &&
         type !== FilterOperationType.NotIn &&
-        type !== FilterOperationType.ArrayContains
+        type !== FilterOperationType.ArrayContains &&
+        type !== FilterOperationType.HasSome &&
+        type !== FilterOperationType.HasEvery
       ) {
         throw new Error(`Filter type ${type} does not support array values`);
       }
+
       if (type === FilterOperationType.ArrayContains) {
         return rawValue.map(this.parseRawStringValue);
       }
@@ -203,6 +213,7 @@ export class FilterParser<TDto, TWhereInput> {
         FilterOperationType.IEndsWith,
         FilterOperationType.Search,
         FilterOperationType.ISearch,
+        FilterOperationType.HasString,
       ].includes(type)
     ) {
       // Never cast this value for a like filter because this only applies to strings
@@ -262,6 +273,15 @@ export class FilterParser<TDto, TWhereInput> {
         return 'array_starts_with';
       case FilterOperationType.ArrayEndsWith:
         return 'array_ends_with';
+      case FilterOperationType.Has:
+      case FilterOperationType.HasString:
+        return 'has';
+      case FilterOperationType.HasSome:
+      case FilterOperationType.HasSomeString:
+        return 'hasSome';
+      case FilterOperationType.HasEvery:
+      case FilterOperationType.HasEveryString:
+        return 'hasEvery';
       default:
         throw new Error(`${type} is not a valid filter type`);
     }
