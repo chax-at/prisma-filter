@@ -88,6 +88,7 @@ const queryString = FilterBuilder.buildFilterQueryString({
 * `NotInStrings` checks whether value is NOT in the given string array.
 * `EqNull`, `NeNull` checks whether the value is null or not null. Must be used instead of `Eq`, `Ne` because otherwise `null` would be treated as string
 * `ArrayContains`, `ArrayStartsWith`, `ArrayEndsWith` can be used on [Prisma arrays](https://www.prisma.io/docs/orm/reference/prisma-client-reference#array_contains)
+* `Has`, `HasString`, `HasSome`, `HasSomeString`, `HasEvery`, `HasEveryString`
 
 ### Filter value types
 Since the filter is transferred via query parameters, everything will be converted into a string. This library will
